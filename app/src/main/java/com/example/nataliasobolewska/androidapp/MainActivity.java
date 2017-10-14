@@ -48,13 +48,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void drawing(ListOfAllObjects listOfAllObjects, DrawObjectsService drawObjectsService, Random random){
-        int randomNumber = createRandNumber(random);
-        drawObjectsService.drawOnImageView(imageView, prepareListForDrawing(listOfAllObjects, randomNumber));
+        drawObjectsService.drawOnImageView(imageView, prepareListForDrawing(listOfAllObjects, createRandNumber(random)));
     }
 
     private ListOfAllObjects prepareListForDrawing(ListOfAllObjects listOfAllObjects, int randomNumber){
         listOfAllObjects.removeAllObjects();
-        listOfAllObjects.createRectanglesData(new Position(new Point(randomNumber, randomNumber), new Point(randomNumber + 30, randomNumber + 30)));
+        listOfAllObjects.createObjects(new Position(new Point(randomNumber, randomNumber), new Point(randomNumber + 30, randomNumber + 30)));
 
         return listOfAllObjects;
     }

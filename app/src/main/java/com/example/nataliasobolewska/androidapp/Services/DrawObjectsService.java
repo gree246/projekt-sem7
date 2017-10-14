@@ -46,15 +46,15 @@ public class DrawObjectsService{
         //Draw the image bitmap into the cavas
         canvas.drawBitmap(myBitmap, 0, 0, null);
 
-        for(OurObject r: listOfAllObjects.getListOfOurObjects()){
-            drawRectangle(r, image, tempBitmap);
+        for(OurObject ourObject: listOfAllObjects.getListOfOurObjects()){
+            drawRectangle(ourObject, image, tempBitmap);
         }
         //Stream.stream(listOfAllObjects.getListOfOurObjects()).forEach(r -> drawRectangle(r, image, tempBitmap));
     }
 
-    private void drawRectangle(OurObject r, ImageView image, Bitmap tempBitmap){
-        Paint myPaint = createPaint(r.getColor());
-        Position position = r.getPosition();
+    private void drawRectangle(OurObject ourObject, ImageView image, Bitmap tempBitmap){
+        Paint myPaint = createPaint(ourObject.getColor());
+        Position position = ourObject.getPosition();
 
         //Draw everything else you want into the canvas, in this example a rectangle with rounded edges
         canvas.drawRoundRect(new RectF(position.getDownPoint().getX(),position.getDownPoint().getY(),position.getUpPoint().getX(),position.getUpPoint().getY()), 2, 2, myPaint);

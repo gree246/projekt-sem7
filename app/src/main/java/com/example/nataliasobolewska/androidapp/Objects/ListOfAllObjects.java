@@ -30,7 +30,7 @@ public class ListOfAllObjects {
         listOfOurObjects = new ArrayList<>();
     }
 
-    public OurObject findRectangleByName(String name){
+    public OurObject findObjectByName(String name){
         try{
             return Stream.stream(this.listOfOurObjects).filter(r -> filterByName(r, name)).collect(toList()).get(0);
         }catch(IndexOutOfBoundsException e){
@@ -42,7 +42,7 @@ public class ListOfAllObjects {
         return ourObject.getName().equalsIgnoreCase(name);
     }
 
-    public void createRectanglesData(Position position){
+    public void createObjects(Position position){
         listOfOurObjects.add(new OurObject("1", 0xFFFF0000, position, "1"));
         listOfOurObjects.add(new OurObject("2", 0xAAAA1111, new Position(new Point(position.getDownPoint().getX() + 20, position.getDownPoint().getY() + 10), new Point(position.getUpPoint().getX() + 20, position.getUpPoint().getY() + 10)), "2"));
 
