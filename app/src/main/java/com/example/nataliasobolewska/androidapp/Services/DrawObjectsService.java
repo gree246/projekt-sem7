@@ -1,20 +1,29 @@
 package com.example.nataliasobolewska.androidapp.Services;
 
-import android.widget.ImageView;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.PorterDuff;
 import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
+import android.widget.ImageView;
 
 import com.example.nataliasobolewska.androidapp.Atributtes.Position;
-import com.example.nataliasobolewska.androidapp.Objects.Rectangle;
+import com.example.nataliasobolewska.androidapp.Objects.ListOfAllObjects;
+import com.example.nataliasobolewska.androidapp.Objects.OurObject;
 
 /**
  * Created by Marcin on 10.10.2017.
  */
 
-public class DrawObjectsService {
+public class DrawObjectsService{
+
+    Canvas canvas = new Canvas();
+    Bitmap myBitmap;
+
+    public DrawObjectsService(ImageView image) {
+        this.myBitmap = ((BitmapDrawable)image.getDrawable()).getBitmap();
+    }
 
     private Paint createPaint(int color){
         Paint myPaint = new Paint();
@@ -29,20 +38,26 @@ public class DrawObjectsService {
         return myPaint;
     }
 
-    public void drawOnImageView(ImageView image, Rectangle rectangle){
-        Bitmap myBitmap = ((BitmapDrawable)image.getDrawable()).getBitmap();
-        Paint myPaint = createPaint(rectangle.getColor());
-        Position position = rectangle.getPosition();
-
+    public void drawOnImageView(ImageView image, ListOfAllObjects listOfAllObjects){
+        canvas.drawColor(0, PorterDuff.Mode.CLEAR);
         //Create a new image bitmap and attach a brand new canvas to it
         Bitmap tempBitmap = Bitmap.createBitmap(myBitmap.getWidth(), myBitmap.getHeight(), Bitmap.Config.RGB_565);
-        Canvas tempCanvas = new Canvas(tempBitmap);
-
+        canvas.setBitmap(tempBitmap);
         //Draw the image bitmap into the cavas
-        tempCanvas.drawBitmap(myBitmap, 0, 0, null);
+        canvas.drawBitmap(myBitmap, 0, 0, null);
+
+        for(OurObject r: listOfAllObjects.getListOfOurObjects()){
+            drawRectangle(r, image, tempBitmap);
+        }
+        //Stream.stream(listOfAllObjects.getListOfOurObjects()).forEach(r -> drawRectangle(r, image, tempBitmap));
+    }
+
+    private void drawRectangle(OurObject r, ImageView image, Bitmap tempBitmap){
+        Paint myPaint = createPaint(r.getColor());
+        Position position = r.getPosition();
 
         //Draw everything else you want into the canvas, in this example a rectangle with rounded edges
-        tempCanvas.drawRoundRect(new RectF(position.getDownPoint().getX(),position.getDownPoint().getY(),position.getUpPoint().getX(),position.getUpPoint().getY()), 2, 2, myPaint);
+        canvas.drawRoundRect(new RectF(position.getDownPoint().getX(),position.getDownPoint().getY(),position.getUpPoint().getX(),position.getUpPoint().getY()), 2, 2, myPaint);
 
         //Attach the canvas to the ImageView
         image.setImageDrawable(new BitmapDrawable(tempBitmap));

@@ -19,7 +19,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @EqualsAndHashCode
 @ToString
-public class Rectangle {
+public class OurObject {
     private String name;
     private int color;
     private Position Position;

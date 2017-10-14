@@ -24,30 +24,34 @@ import static solid.collectors.ToList.toList;
 @EqualsAndHashCode
 @ToString
 public class ListOfAllObjects {
-    private List<Rectangle> listOfRectangles = new ArrayList<>();
+    private List<OurObject> listOfOurObjects;
 
-    public ListOfAllObjects(Position position) {
-        createRectanglesData(position);
+    public ListOfAllObjects() {
+        listOfOurObjects = new ArrayList<>();
     }
 
-    public Rectangle findRectangleByName(String name){
+    public OurObject findRectangleByName(String name){
         try{
-            return Stream.stream(this.listOfRectangles).filter(r -> filterByName(r, name)).collect(toList()).get(0);
+            return Stream.stream(this.listOfOurObjects).filter(r -> filterByName(r, name)).collect(toList()).get(0);
         }catch(IndexOutOfBoundsException e){
-            return new Rectangle();
+            return new OurObject();
         }
     }
 
-    public boolean filterByName(Rectangle rectangle, String name){
-        return rectangle.getName().equalsIgnoreCase(name);
+    private boolean filterByName(OurObject ourObject, String name){
+        return ourObject.getName().equalsIgnoreCase(name);
     }
 
     public void createRectanglesData(Position position){
-        listOfRectangles.add(new Rectangle("1", 0xFFFF0000, position, "1"));
-        listOfRectangles.add(new Rectangle("2", 0xAAAA1111, new Position(new Point(position.getDownPoint().getX() + 20, position.getDownPoint().getY() + 10), new Point(position.getUpPoint().getX() + 20, position.getUpPoint().getY() + 10)), "2"));
+        listOfOurObjects.add(new OurObject("1", 0xFFFF0000, position, "1"));
+        listOfOurObjects.add(new OurObject("2", 0xAAAA1111, new Position(new Point(position.getDownPoint().getX() + 20, position.getDownPoint().getY() + 10), new Point(position.getUpPoint().getX() + 20, position.getUpPoint().getY() + 10)), "2"));
+
+        /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            TUTRAJ MEJSCE NA DODANIE TWOJEJ KULKI CZY CZEGOS TAM
+        */
     }
 
     public void removeAllObjects(){
-        listOfRectangles.clear();
+        listOfOurObjects.clear();
     }
 }

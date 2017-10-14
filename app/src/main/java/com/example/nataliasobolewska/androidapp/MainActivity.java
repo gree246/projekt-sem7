@@ -7,10 +7,11 @@ import android.widget.ImageView;
 import com.example.nataliasobolewska.androidapp.Atributtes.Point;
 import com.example.nataliasobolewska.androidapp.Atributtes.Position;
 import com.example.nataliasobolewska.androidapp.Objects.ListOfAllObjects;
-import com.example.nataliasobolewska.androidapp.Objects.Rectangle;
 import com.example.nataliasobolewska.androidapp.Services.DrawObjectsService;
 
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -25,32 +26,40 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        draw();
+        doThreadsMalformation();
     }
 
-    private void draw(){
-        ListOfAllObjects listOfAllObjects = new ListOfAllObjects(new Position(new Point(20, 20), new Point(50, 50)));
-        DrawObjectsService drawObjectsService = new DrawObjectsService();
-        Random r = new Random();
-        int random = r.nextInt(30);
+    private void doThreadsMalformation(){
+        ListOfAllObjects listOfAllObjects = new ListOfAllObjects();
+        DrawObjectsService drawObjectsService = new DrawObjectsService(imageView);
+        Random random = new Random();
+        Timer t = new Timer();
+        t.scheduleAtFixedRate(createTask(listOfAllObjects, drawObjectsService, random), 1000L, 2000L);
+    }
 
+    private TimerTask createTask(ListOfAllObjects listOfAllObjects, DrawObjectsService drawObjectsService, Random random){
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                runOnUiThread(new Thread(() -> drawing(listOfAllObjects, drawObjectsService, random)));
+            }
+        };
+        return task;
+    }
 
+    private void drawing(ListOfAllObjects listOfAllObjects, DrawObjectsService drawObjectsService, Random random){
+        int randomNumber = createRandNumber(random);
+        drawObjectsService.drawOnImageView(imageView, prepareListForDrawing(listOfAllObjects, randomNumber));
+    }
+
+    private ListOfAllObjects prepareListForDrawing(ListOfAllObjects listOfAllObjects, int randomNumber){
         listOfAllObjects.removeAllObjects();
-        listOfAllObjects.createRectanglesData(new Position(new Point(random, random), new Point(random + 30,  random + 30)));
+        listOfAllObjects.createRectanglesData(new Position(new Point(randomNumber, randomNumber), new Point(randomNumber + 30, randomNumber + 30)));
 
-        for(int i=0; i< 2; i++){
-            for(Rectangle rectangle: listOfAllObjects.getListOfRectangles()){
-                drawObjectsService.drawOnImageView(imageView, rectangle);
-            }
-
-            try {
-                Thread.sleep(4000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-
-        //Stream.stream(listOfAllObjects.getListOfRectangles()).forEach((Rectangle r) ->  drawObjectsService.drawOnImageView(imageView, r));
+        return listOfAllObjects;
     }
 
+    private int createRandNumber(Random random){
+        return random.nextInt(50) + 1;
+    }
 }
