@@ -1,7 +1,8 @@
 package com.example.nataliasobolewska.androidapp.Objects;
 
+import android.widget.ImageView;
+
 import com.example.nataliasobolewska.androidapp.Atributtes.Point;
-import com.example.nataliasobolewska.androidapp.Atributtes.Position;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,13 +43,9 @@ public class ListOfAllObjects {
         return ourObject.getName().equalsIgnoreCase(name);
     }
 
-    public void createObjects(Position position){
-        listOfOurObjects.add(new OurObject("1", 0xFFFF0000, position, "1"));
-        listOfOurObjects.add(new OurObject("2", 0xAAAA1111, new Position(new Point(position.getDownPoint().getX() + 20, position.getDownPoint().getY() + 10), new Point(position.getUpPoint().getX() + 20, position.getUpPoint().getY() + 10)), "2"));
-
-        /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            TUTRAJ MEJSCE NA DODANIE TWOJEJ KULKI CZY CZEGOS TAM
-        */
+    public void createObjects(Point point, ImageView imageView, ImageView imageView2){
+        listOfOurObjects.add(new OurObject("1", point, "1", imageView));
+        listOfOurObjects.add(new OurObject("2", new Point(point.getX() + 20, point.getY() + 20), "1", imageView2));
     }
 
     public void removeAllObjects(){

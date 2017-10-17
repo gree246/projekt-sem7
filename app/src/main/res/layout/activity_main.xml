@@ -8,9 +8,34 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="334dp"
-        android:layout_height="219dp"
+        android:layout_width="254dp"
+        android:layout_height="181dp"
         app:srcCompat="@mipmap/floor0"
-        tools:layout_editor_absoluteX="25dp"
-        tools:layout_editor_absoluteY="146dp" />
+        tools:layout_editor_absoluteX="80dp"
+        tools:layout_editor_absoluteY="167dp" />
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@mipmap/ic_launcher"
+        tools:layout_editor_absoluteY="209dp"
+        tools:layout_editor_absoluteX="41dp" />
+
+    <ImageView
+        android:id="@+id/imageViewOfWarior"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@mipmap/ic_launcher_round"
+        tools:layout_editor_absoluteY="209dp"
+        tools:layout_editor_absoluteX="41dp" />
+
+    <ImageView
+        android:id="@+id/imageViewOfWarior2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@mipmap/ic_launcher_round"
+        tools:layout_editor_absoluteY="209dp"
+        tools:layout_editor_absoluteX="41dp" />
+
 </android.support.constraint.ConstraintLayout>

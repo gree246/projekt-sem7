@@ -1,7 +1,9 @@
 package com.example.nataliasobolewska.androidapp.Objects;
 
 
-import com.example.nataliasobolewska.androidapp.Atributtes.Position;
+import android.widget.ImageView;
+
+import com.example.nataliasobolewska.androidapp.Atributtes.Point;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -21,8 +23,7 @@ import lombok.ToString;
 @ToString
 public class OurObject {
     private String name;
-    private int color;
-    private Position Position;
+    private Point point;
     private String floor;
-
+    private ImageView imageView;
 }
