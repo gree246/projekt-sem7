@@ -4,13 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.nataliasobolewska.androidapp.MainActivity">
+    tools:context="com.example.kamol.myapplication.MainActivity">
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="334dp"
-        android:layout_height="219dp"
-        app:srcCompat="@mipmap/floor0"
-        tools:layout_editor_absoluteX="25dp"
-        tools:layout_editor_absoluteY="146dp" />
+    <TextView
+        android:id="@+id/wifiSignal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:text=""
+        android:textSize="10sp" />
+
+
 </android.support.constraint.ConstraintLayout>
