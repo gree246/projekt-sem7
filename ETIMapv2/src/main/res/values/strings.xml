@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">ETIMap</string>
+    <string name="bUp">/\\</string>
+    <string name="bLeft"><![CDATA[<-]]></string>
+    <string name="bDown">\\/</string>
+    <string name="BRight"><![CDATA[->]]></string>
+</resources>
