@@ -4,6 +4,8 @@ import android.content.Context;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import 	java.lang.Math;
+
 import com.gd.etimap.atributtes.Point;
 import com.gd.etimap.objects.ListOfAllObjects;
 import com.gd.etimap.objects.OurObject;
@@ -29,20 +31,32 @@ public class ImageTransformationHelper {
         }
 
         // rotacja strzałki
-//        OurObject player = listOfAllObjects.findAllEnemiesOrPlayerOrArrow("Player").get(0);
-//        rotateObject(player, tileView, rightDirection);
-//        OurObject arrow = listOfAllObjects.findAllEnemiesOrPlayerOrArrow("Arrow").get(0);
-        // to jest ważne żeby te dwie linijki niżej dać przed obrotem strzałki (to jest punkt wokół którego się będzie obracać)
-//        arrow.setPivotX(player.getX());
-//        arrow.setPivotY(player.getY());
-//        rotateObject(arrow, tileView, rightDirection);
-
+        OurObject player = listOfAllObjects.findAllEnemiesOrPlayerOrArrow("Player").get(0);
+        rotateObject(player, tileView, rightDirection);
+        OurObject arrow = listOfAllObjects.findAllEnemiesOrPlayerOrArrow("Arrow").get(0);
+        rotateArrow(player, arrow, tileView, rightDirection);
 
 
 //        rotateObject(listOfAllObjects.findAllEnemiesOrPlayerOrArrow("Player").get(0), tileView, rightDirection);
 //        OurObject arrow = listOfAllObjects.findAllEnemiesOrPlayerOrArrow("Arrow").get(0);
 //        rotateObject(arrow, tileView, rightDirection);
 //        arrow.setPoint(new Point(arrow.getPoint().getX(), arrow.getPoint().getY()));
+    }
+
+    private void rotateArrow(OurObject player, OurObject arrow, TileView tileView, boolean rightDirection)
+    {
+        float angle = rightDirection ? 10f : -10f;
+        float x, y, z, alpha;
+        tileView.removeMarker(arrow.getMarker());
+        z = (float) (Math.abs((float)(arrow.getPoint().getY() - player.getPoint().getY())) * Math.sqrt((float)(2*(1 - Math.cos(angle)))));
+        alpha = (180 - angle) / 2;
+        x = z * alpha;
+        y = (float) Math.sqrt((float)(z * z - x * x));
+        // tutaj według moich wyliczeń powinno się zgadzać (ewentualnie można zamienić plus z minusem)
+        // ale się coś psuje, bo po dodaniu tych dwóch linijek wszystko znika ;/
+//        arrow.getPoint().setX(arrow.getPoint().getX() + y);
+//        arrow.getPoint().setY(arrow.getPoint().getY() - x);
+        tileView.addMarker(rotateImageByAngle(arrow.getImageView(), angle), arrow.getPoint().getX(), arrow.getPoint().getY(), null, null);
     }
 
     private void rotateObject(OurObject ourObject, TileView tileView, boolean rightDirection){

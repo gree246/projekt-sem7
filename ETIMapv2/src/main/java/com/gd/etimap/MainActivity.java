@@ -73,6 +73,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void doListenersAndTileLayout(){
         RelativeLayout tileLayout = (RelativeLayout) findViewById(R.id.MapLayoutId) ;
+        tileLayout.setScaleX(2);
+        tileLayout.setScaleY(2);
+        tileLayout.setMinimumWidth(600);
+        tileLayout.setMinimumHeight(600);
         tileLayout.addView(tileView);
 
         Button bLeft = (Button) findViewById(R.id.buttonLeft_id) ;
@@ -92,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void doAnimation(){
-        /*counter++;
+        counter++;
         if(counter < 300){
             drawingHelper.changePositionOfPlayer(listOfAllObjects, "x", "+");
         }else{
@@ -100,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
             if(counter == 600){
                 counter = 0;
             }
-        }*/
+        }
         if(Math.random() < 0.02){
             drawingHelper.drawEnemy(listOfAllObjects, imageTransformationHelper.createImageView(R.mipmap.enemy0, this, false), tileView);
         }
