@@ -14,8 +14,9 @@ public class CreateObjectsHelper {
     public static final double PLAYER_X = 4000;
     public static final double PLAYER_Y = 4215;
 
-    public void createPlayerObjects(ListOfAllObjects listOfAllObjects, ImageView imageViewPlayer){
+    public void createPlayerAndArrowObjects(ListOfAllObjects listOfAllObjects, ImageView imageViewPlayer, ImageView imageViewArrow){
         listOfAllObjects.removeAllObjects();
         listOfAllObjects.createPlayer(new Point(PLAYER_X, PLAYER_Y), imageViewPlayer);
+        listOfAllObjects.createArrow(imageViewArrow);
     }
 }

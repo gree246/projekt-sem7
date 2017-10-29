@@ -6,24 +6,32 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.gd.etimap.helpers.CreateObjectsHelper;
 import com.gd.etimap.helpers.DrawingHelper;
+import com.gd.etimap.helpers.ImageTransformationHelper;
 import com.gd.etimap.objects.ListOfAllObjects;
 import com.gd.etimap.objects.OurObject;
 import com.qozix.tileview.TileView;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity {
+
+    @BindView(R2.id.rotateLeft_id)
+    Button rotateLeftButton;
+    @BindView(R2.id.rotateRight_id)
+    Button rotateRightButton;
+
 
     private ListOfAllObjects listOfAllObjects = new ListOfAllObjects();
     private TileView tileView = null;
 
     private DrawingHelper drawingHelper = new DrawingHelper();
     private CreateObjectsHelper createObjectsHelper = new CreateObjectsHelper();
+    private ImageTransformationHelper imageTransformationHelper = new ImageTransformationHelper();
 
     private static final int updateGUIInterval  = 50;
     private updateGUIThread updateGUIThread=new updateGUIThread();
@@ -37,18 +45,11 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         createTileView();
 
-        createObjectsHelper.createPlayerObjects(listOfAllObjects, createImageView(R.mipmap.ic_launcher));
-        drawingHelper.drawAllObjects(listOfAllObjects, tileView);
+        createObjectsHelper.createPlayerAndArrowObjects(listOfAllObjects, imageTransformationHelper.createImageView(R.mipmap.ic_launcher, this, false), imageTransformationHelper.createImageView(R.mipmap.arrow, this, true));
+        drawingHelper.drawPlayerAndArrowObjects(listOfAllObjects, tileView);
 
         doListenersAndTileLayout();
         updateGUIHandler.postDelayed(updateGUIThread, updateGUIInterval);
-    }
-
-
-    private ImageView createImageView(int resId){
-        ImageView imageView = new ImageView(this);
-        imageView.setImageResource(resId);
-        return imageView;
     }
 
     private void createTileView(){
@@ -57,12 +58,10 @@ public class MainActivity extends AppCompatActivity {
             public boolean onScale(ScaleGestureDetector scaleGestureDetector) {
                 return false;
             }
-
             @Override
             public boolean onTouchEvent(MotionEvent event) {
                 return false;
             }
-
             @Override
             public boolean onFling(MotionEvent event1, MotionEvent event2, float velocityX, float velocityY) {
                 return false;
@@ -87,10 +86,13 @@ public class MainActivity extends AppCompatActivity {
 
         Button bDown = (Button) findViewById(R.id.buttonDown_id) ;
         bDown.setOnClickListener(view -> drawingHelper.changePositionOfPlayer(listOfAllObjects, "y", "+"));
+
+        rotateLeftButton.setOnClickListener(view -> imageTransformationHelper.rotate(listOfAllObjects, false, tileView));
+        rotateRightButton.setOnClickListener(view -> imageTransformationHelper.rotate(listOfAllObjects, true, tileView));
     }
 
     private void doAnimation(){
-        counter++;
+        /*counter++;
         if(counter < 300){
             drawingHelper.changePositionOfPlayer(listOfAllObjects, "x", "+");
         }else{
@@ -98,20 +100,24 @@ public class MainActivity extends AppCompatActivity {
             if(counter == 600){
                 counter = 0;
             }
-        }
+        }*/
         if(Math.random() < 0.02){
-            drawingHelper.drawEnemy(listOfAllObjects, createImageView(R.mipmap.ic_launcher), tileView);
+            drawingHelper.drawEnemy(listOfAllObjects, imageTransformationHelper.createImageView(R.mipmap.ic_launcher, this, false), tileView);
         }
     }
 
-    private void doSomeCrazyStuffInEachIterationOfAnimation(){
-        OurObject player = listOfAllObjects.findAllEnemiesOrPlayer("Player").get(0);
-        double x = player.getPoint().getX();
-        double y = player.getPoint().getY();
+    private void updateMarker(OurObject ourObject){
+        double x = ourObject.getPoint().getX();
+        double y = ourObject.getPoint().getY();
 
-        tileView.moveMarker(player.getImageView(),x,y);
+        tileView.moveMarker(ourObject.getImageView(),x,y);
         tileView.scrollToAndCenter(x,y);
         tileView.slideToAndCenterWithScale(x,y,1f);
+    }
+
+    private void doSomeCrazyStuffInEachIterationOfAnimation(){
+        updateMarker(listOfAllObjects.findAllEnemiesOrPlayerOrArrow("Player").get(0));
+        updateMarker(listOfAllObjects.findAllEnemiesOrPlayerOrArrow("Arrow").get(0));
     }
 
     class updateGUIThread implements Runnable {
@@ -122,5 +128,4 @@ public class MainActivity extends AppCompatActivity {
             updateGUIHandler.postDelayed(this, updateGUIInterval);
         }
     }
-
 }

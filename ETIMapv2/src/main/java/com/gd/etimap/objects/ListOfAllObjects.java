@@ -31,22 +31,28 @@ public class ListOfAllObjects {
         listOfOurOurObjects = new ArrayList<>();
     }
 
-    public List<OurObject> findAllEnemiesOrPlayer(String name){
+    public List<OurObject> findAllEnemiesOrPlayerOrArrow(String name){
         if(name.equalsIgnoreCase("Enemy"))
             return Stream.stream(this.listOfOurOurObjects).filter(r -> filterEnemies(r)).collect(toList());
-
+        if(name.equalsIgnoreCase("Arrow"))
+            return Stream.stream(this.listOfOurOurObjects).filter(r -> filterArrow(r)).collect(toList());
         return Stream.stream(this.listOfOurOurObjects).filter(r -> filterPlayer(r)).collect(toList());
     }
 
     public List<OurObject> findAllUnVisibleEnemies(){
-        return Stream.stream(findAllEnemiesOrPlayer("Enemy")).filter(e -> filterUnVisible(e)).collect(toList());
+        return Stream.stream(findAllEnemiesOrPlayerOrArrow("Enemy")).filter(e -> filterUnVisible(e)).collect(toList());
     }
 
     public static boolean filterVisible(OurObject ourObject){
         return !filterUnVisible(ourObject);
     }
+
     private static boolean filterUnVisible(OurObject ourObject){
         return !((Enemy) ourObject).isVisible();
+    }
+
+    private boolean filterArrow(OurObject ourObject){
+        return ourObject instanceof Arrow;
     }
 
     private boolean filterEnemies(OurObject ourObject){
@@ -55,6 +61,10 @@ public class ListOfAllObjects {
 
     private boolean filterPlayer(OurObject ourObject){
         return ourObject instanceof Player;
+    }
+
+    public void createArrow(ImageView imageView){
+      listOfOurOurObjects.add(new Arrow(new Point(0, 0), "1", imageView, null));
     }
 
     public void createEnemy(Point point, ImageView imageView){
