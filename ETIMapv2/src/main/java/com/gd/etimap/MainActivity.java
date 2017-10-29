@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }*/
         if(Math.random() < 0.02){
-            drawingHelper.drawEnemy(listOfAllObjects, imageTransformationHelper.createImageView(R.mipmap.ic_launcher, this, false), tileView);
+            drawingHelper.drawEnemy(listOfAllObjects, imageTransformationHelper.createImageView(R.mipmap.enemy0, this, false), tileView);
         }
     }
 
