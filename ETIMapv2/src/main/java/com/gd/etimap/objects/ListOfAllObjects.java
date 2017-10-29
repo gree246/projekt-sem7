@@ -25,22 +25,41 @@ import static solid.collectors.ToList.toList;
 @EqualsAndHashCode
 @ToString
 public class ListOfAllObjects {
-    private List<OurObject> listOfOurOurObjects;
+    private List<OurObject> listOfOurObjects;
 
     public ListOfAllObjects() {
-        listOfOurOurObjects = new ArrayList<>();
+        listOfOurObjects = new ArrayList<>();
     }
 
     public List<OurObject> findAllEnemiesOrPlayerOrArrow(String name){
         if(name.equalsIgnoreCase("Enemy"))
-            return Stream.stream(this.listOfOurOurObjects).filter(r -> filterEnemies(r)).collect(toList());
+            return Stream.stream(this.listOfOurObjects).filter(r -> filterEnemies(r)).collect(toList());
         if(name.equalsIgnoreCase("Arrow"))
-            return Stream.stream(this.listOfOurOurObjects).filter(r -> filterArrow(r)).collect(toList());
-        return Stream.stream(this.listOfOurOurObjects).filter(r -> filterPlayer(r)).collect(toList());
+            return Stream.stream(this.listOfOurObjects).filter(r -> filterArrow(r)).collect(toList());
+        return Stream.stream(this.listOfOurObjects).filter(r -> filterPlayer(r)).collect(toList());
     }
 
+    public List<OurObject> findAllVisibleEnemiesWhichHpIsZero(){
+        return Stream.stream(findAllVisibleEnemies()).filter(e -> filterHp(e)).collect(toList());
+    }
+
+    public List<OurObject> findAllVisibleEnemies(){
+        return Stream.stream(findAllEnemiesOrPlayerOrArrow("Enemy")).filter(e -> filterVisible(e)).collect(toList());
+    }
     public List<OurObject> findAllUnVisibleEnemies(){
         return Stream.stream(findAllEnemiesOrPlayerOrArrow("Enemy")).filter(e -> filterUnVisible(e)).collect(toList());
+    }
+
+    public OurObject findObjectById(int id){
+        return Stream.stream(this.listOfOurObjects).filter(e -> filterById(e, id)).collect(toList()).get(0);
+    }
+
+    private boolean filterById(OurObject ourObject, int id){
+        return ourObject.getId() == id;
+    }
+
+    private boolean filterHp(OurObject ourObject){
+        return ((Enemy) ourObject).getHp() == 0;
     }
 
     public static boolean filterVisible(OurObject ourObject){
@@ -64,18 +83,18 @@ public class ListOfAllObjects {
     }
 
     public void createArrow(ImageView imageView){
-      listOfOurOurObjects.add(new Arrow(new Point(0, 0), "1", imageView, null));
+      listOfOurObjects.add(new Arrow(new Point(0, 0), "1", imageView, null));
     }
 
     public void createEnemy(Point point, ImageView imageView){
-        listOfOurOurObjects.add(new Enemy(point, "1", imageView, false, 100, null));
+        listOfOurObjects.add(new Enemy(point, "1", imageView, false, 100, null));
     }
 
     public void createPlayer(Point point, ImageView imageView){
-        listOfOurOurObjects.add(new Player(point, "1", imageView, null));
+        listOfOurObjects.add(new Player(point, "1", imageView, null));
     }
 
     public void removeAllObjects(){
-        listOfOurOurObjects.clear();
+        listOfOurObjects.clear();
     }
 }
