@@ -19,10 +19,30 @@ public class ImageTransformationHelper {
     public static final int ARROW_IMAGE_HEIGHT = 150;
 
     public void rotate(ListOfAllObjects listOfAllObjects, boolean rightDirection, TileView tileView){
-        rotateObject(listOfAllObjects.findAllEnemiesOrPlayerOrArrow("Player").get(0), tileView, rightDirection);
-        OurObject arrow = listOfAllObjects.findAllEnemiesOrPlayerOrArrow("Arrow").get(0);
-        rotateObject(arrow, tileView, rightDirection);
-        arrow.setPoint(new Point(arrow.getPoint().getX(), arrow.getPoint().getY()));
+        if(rightDirection)
+        {
+            tileView.setRotation(tileView.getRotation()-10);
+        }
+        else
+        {
+            tileView.setRotation(tileView.getRotation()+10);
+        }
+
+        // rotacja strzałki
+//        OurObject player = listOfAllObjects.findAllEnemiesOrPlayerOrArrow("Player").get(0);
+//        rotateObject(player, tileView, rightDirection);
+//        OurObject arrow = listOfAllObjects.findAllEnemiesOrPlayerOrArrow("Arrow").get(0);
+        // to jest ważne żeby te dwie linijki niżej dać przed obrotem strzałki (to jest punkt wokół którego się będzie obracać)
+//        arrow.setPivotX(player.getX());
+//        arrow.setPivotY(player.getY());
+//        rotateObject(arrow, tileView, rightDirection);
+
+
+
+//        rotateObject(listOfAllObjects.findAllEnemiesOrPlayerOrArrow("Player").get(0), tileView, rightDirection);
+//        OurObject arrow = listOfAllObjects.findAllEnemiesOrPlayerOrArrow("Arrow").get(0);
+//        rotateObject(arrow, tileView, rightDirection);
+//        arrow.setPoint(new Point(arrow.getPoint().getX(), arrow.getPoint().getY()));
     }
 
     private void rotateObject(OurObject ourObject, TileView tileView, boolean rightDirection){
