@@ -69,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
         };
         tileView.setSize( 8192, 8192 );  // the original size of the untiled image
         tileView.addDetailLevel( 1f, "tiles/tile_%d_%d.png", 256, 256);
+
     }
 
     private void doListenersAndTileLayout(){
@@ -77,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
         tileLayout.setScaleY(2);
         tileLayout.setMinimumWidth(600);
         tileLayout.setMinimumHeight(600);
+
         tileLayout.addView(tileView);
 
         Button bLeft = (Button) findViewById(R.id.buttonLeft_id) ;
@@ -114,9 +116,13 @@ public class MainActivity extends AppCompatActivity {
         double x = ourObject.getPoint().getX();
         double y = ourObject.getPoint().getY();
 
-        tileView.moveMarker(ourObject.getImageView(),x,y);
+        tileView.removeMarker(ourObject.getImageView());
+        tileView.addMarker(ourObject.getImageView(),x,y,-0.5f,-0.5f);
         tileView.scrollToAndCenter(x,y);
         tileView.slideToAndCenterWithScale(x,y,1f);
+        //#######################################################3
+        //tutaj robimy dokładnie to samo co w DrawingHelper.draw
+        // trochę bez sensu jest  podwajać
     }
 
     private void doSomeCrazyStuffInEachIterationOfAnimation(){

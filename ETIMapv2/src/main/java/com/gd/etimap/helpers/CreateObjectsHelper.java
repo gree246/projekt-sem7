@@ -11,8 +11,8 @@ import com.gd.etimap.objects.ListOfAllObjects;
 
 public class CreateObjectsHelper {
 
-    public static final double PLAYER_X = 4000;
-    public static final double PLAYER_Y = 4215;
+    public static final double PLAYER_X = 4545;
+    public static final double PLAYER_Y = 4368;
 
     public void createPlayerAndArrowObjects(ListOfAllObjects listOfAllObjects, ImageView imageViewPlayer, ImageView imageViewArrow){
         listOfAllObjects.removeAllObjects();

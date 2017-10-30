@@ -47,7 +47,7 @@ public class ImageTransformationHelper {
     {
         float angle = rightDirection ? 10f : -10f;
         float x, y, z, alpha;
-        tileView.removeMarker(arrow.getMarker());
+//        tileView.removeMarker(arrow.getMarker());
         z = (float) (Math.abs((float)(arrow.getPoint().getY() - player.getPoint().getY())) * Math.sqrt((float)(2*(1 - Math.cos(angle)))));
         alpha = (180 - angle) / 2;
         x = z * alpha;
@@ -56,16 +56,24 @@ public class ImageTransformationHelper {
         // ale się coś psuje, bo po dodaniu tych dwóch linijek wszystko znika ;/
 //        arrow.getPoint().setX(arrow.getPoint().getX() + y);
 //        arrow.getPoint().setY(arrow.getPoint().getY() - x);
-        tileView.addMarker(rotateImageByAngle(arrow.getImageView(), angle), arrow.getPoint().getX(), arrow.getPoint().getY(), null, null);
+//        tileView.addMarker(rotateImageByAngle(arrow.getImageView(), angle), arrow.getPoint().getX(), arrow.getPoint().getY(), null,null);
+       arrow.setImageView(rotateImageByAngle(arrow.getImageView(), angle));
+//               , arrow.getPoint().getX(), arrow.getPoint().getY(), -0.5f, -0.5f);
     }
 
     private void rotateObject(OurObject ourObject, TileView tileView, boolean rightDirection){
-        tileView.removeMarker(ourObject.getMarker());
+
+//        tileView.removeMarker(ourObject.getMarker());
+//        float angle = rightDirection ? 10f : -10f;
+//        tileView.addMarker(rotateImageByAngle(ourObject.getImageView(), angle), ourObject.getPoint().getX(), ourObject.getPoint().getY(), -0.5f, -0.5f);
+
+//        tileView.removeMarker(ourObject.getMarker());
         float angle = rightDirection ? 10f : -10f;
-        tileView.addMarker(rotateImageByAngle(ourObject.getImageView(), angle), ourObject.getPoint().getX(), ourObject.getPoint().getY(), null, null);
+        ourObject.setImageView(rotateImageByAngle(ourObject.getImageView(), angle));
     }
 
     private ImageView rotateImageByAngle(ImageView imageView, float angle){
+
         imageView.setRotation(imageView.getRotation() + angle);
 
         return imageView;

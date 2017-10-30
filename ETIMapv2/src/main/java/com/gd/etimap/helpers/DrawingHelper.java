@@ -26,7 +26,7 @@ public class DrawingHelper {
     }
 
     public void draw(OurObject ourObject, TileView tileView){
-        View marker = tileView.addMarker(ourObject.getImageView(),ourObject.getPoint().getX(),ourObject.getPoint().getY(),null,null);
+        View marker = tileView.addMarker(ourObject.getImageView(),ourObject.getPoint().getX(),ourObject.getPoint().getY(),-0.5f,-0.5f);
         ourObject.setMarker(marker);
         if(ourObject instanceof Player)
             tileView.slideToAndCenter(ourObject.getPoint().getX(),ourObject.getPoint().getY());
@@ -67,7 +67,7 @@ public class DrawingHelper {
         OurObject arrow = listOfAllObjects.findAllEnemiesOrPlayerOrArrow("Arrow").get(0);
         OurObject player = listOfAllObjects.findAllEnemiesOrPlayerOrArrow("Player").get(0);
 
-        arrow.setPoint(new Point(player.getPoint().getX() + 20, player.getPoint().getY() - 70));
+        arrow.setPoint(new Point(player.getPoint().getX(), player.getPoint().getY()));
         draw(arrow, tileView);
     }
 
