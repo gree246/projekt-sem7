@@ -28,39 +28,40 @@ public class DrawingHelper {
     public void draw(OurObject ourObject, TileView tileView){
         View marker = tileView.addMarker(ourObject.getImageView(),ourObject.getPoint().getX(),ourObject.getPoint().getY(),-0.5f,-0.5f);
         ourObject.setMarker(marker);
-        if(ourObject instanceof Player)
-            tileView.slideToAndCenter(ourObject.getPoint().getX(),ourObject.getPoint().getY());
         if(ourObject instanceof Enemy)
             ((Enemy) ourObject).setVisible(true);
     }
 
-    public void changePositionOfPlayer(ListOfAllObjects listOfAllObjects, String xOrY, String minusOrPlus){
+    public void changePositionOfObject(OurObject ourObject, String xOrY, String minusOrPlus, TileView tileView){
+        if(xOrY.equals("x") && minusOrPlus.equals("-")){
+            ourObject.getPoint().setX(ourObject.getPoint().getX() - 6);
+        }else if(xOrY.equals("x") && minusOrPlus.equals("+")){
+            ourObject.getPoint().setX(ourObject.getPoint().getX() + 6);
+        }else if(xOrY.equals("y") && minusOrPlus.equals("-")){
+            ourObject.getPoint().setY(ourObject.getPoint().getY() - 6);
+        }else if(xOrY.equals("y") && minusOrPlus.equals("+")) {
+            ourObject.getPoint().setY(ourObject.getPoint().getY() + 6);
+        }
+        double x = ourObject.getPoint().getX();
+        double y = ourObject.getPoint().getY();
+
+        tileView.moveMarker(ourObject.getMarker(), x, y);
+    }
+
+    public void changePositionOfPlayer(ListOfAllObjects listOfAllObjects, String xOrY, String minusOrPlus, TileView tileView){
         Player player = (Player) listOfAllObjects.findAllEnemiesOrPlayerOrArrow("Player").get(0);
         Arrow arrow = (Arrow) listOfAllObjects.findAllEnemiesOrPlayerOrArrow("Arrow").get(0);
-
-        if(xOrY.equals("x") && minusOrPlus.equals("-")){
-            player.getPoint().setX(player.getPoint().getX() - 6);
-            arrow.getPoint().setX(arrow.getPoint().getX() - 6);
-        }else if(xOrY.equals("x") && minusOrPlus.equals("+")){
-            player.getPoint().setX(player.getPoint().getX() + 6);
-            arrow.getPoint().setX(arrow.getPoint().getX() + 6);
-        }else if(xOrY.equals("y") && minusOrPlus.equals("-")){
-            player.getPoint().setY(player.getPoint().getY() - 6);
-            arrow.getPoint().setY(arrow.getPoint().getY() - 6);
-        }else if(xOrY.equals("y") && minusOrPlus.equals("+")) {
-            player.getPoint().setY(player.getPoint().getY() + 6);
-            arrow.getPoint().setY(arrow.getPoint().getY() + 6);
-        }
+        changePositionOfObject(player, xOrY, minusOrPlus, tileView);
+        changePositionOfObject(arrow, xOrY, minusOrPlus, tileView);
     }
 
     public void drawEnemy(ListOfAllObjects listOfAllObjects, ImageView imageView, TileView tileView){
-        removeOldEnemiesFromMap(listOfAllObjects, tileView);
-
-        OurObject player = listOfAllObjects.findAllEnemiesOrPlayerOrArrow("Player").get(0);
-        Point point = randPosition();
-        listOfAllObjects.createEnemy(new Point(player.getPoint().getX() + point.getX(), player.getPoint().getY() + point.getY()), imageView);
-
-        draw(listOfAllObjects.findAllUnVisibleEnemies().get(0), tileView);
+        if(listOfAllObjects.findAllVisibleEnemies().size() < 2){
+            OurObject player = listOfAllObjects.findAllEnemiesOrPlayerOrArrow("Player").get(0);
+            Point point = randPosition();
+            listOfAllObjects.createEnemy(new Point(player.getPoint().getX() + point.getX(), player.getPoint().getY() + point.getY()), imageView);
+            draw(listOfAllObjects.findAllUnVisibleEnemies().get(0), tileView);
+        }
     }
 
     private void drawArrow(ListOfAllObjects listOfAllObjects, TileView tileView){
