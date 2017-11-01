@@ -108,8 +108,8 @@ public class ShootingHelper {
         double degrees = player.getImageView().getRotation();
         double radians = Math.toRadians(-degrees);
         double tangens = Math.tan(radians);
-        double xPlayer = player.getPoint().getX() - 180;
-        double yPlayer = player.getPoint().getY() + 180;
+        double xPlayer = player.getPoint().getY();
+        double yPlayer = player.getPoint().getX();
         double b = yPlayer - (tangens*xPlayer);
         counter += number;
         xPlayer += (counter+10);
