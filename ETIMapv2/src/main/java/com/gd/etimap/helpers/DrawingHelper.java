@@ -21,7 +21,7 @@ import solid.stream.Stream;
 public class DrawingHelper {
 
     public void drawPlayerAndArrowObjects(ListOfAllObjects listOfAllObjects, TileView tileView){
-        Stream.stream(listOfAllObjects.findAllEnemiesOrPlayerOrArrow("Player")).forEach((Action1<OurObject>) o -> draw(o, tileView));
+        Stream.stream(listOfAllObjects.findAllEnemiesOrPlayerOrArrowOrBullet("Player")).forEach((Action1<OurObject>) o -> draw(o, tileView));
         drawArrow(listOfAllObjects, tileView);
     }
 
@@ -30,6 +30,10 @@ public class DrawingHelper {
         ourObject.setMarker(marker);
         if(ourObject instanceof Enemy)
             ((Enemy) ourObject).setVisible(true);
+    }
+
+    public void changePositionToPoint(OurObject ourObject, TileView tileView){
+        tileView.moveMarker(ourObject.getMarker(), ourObject.getPoint().getX(), ourObject.getPoint().getY());
     }
 
     public void changePositionOfObject(OurObject ourObject, String xOrY, String minusOrPlus, TileView tileView){
@@ -49,15 +53,15 @@ public class DrawingHelper {
     }
 
     public void changePositionOfPlayer(ListOfAllObjects listOfAllObjects, String xOrY, String minusOrPlus, TileView tileView){
-        Player player = (Player) listOfAllObjects.findAllEnemiesOrPlayerOrArrow("Player").get(0);
-        Arrow arrow = (Arrow) listOfAllObjects.findAllEnemiesOrPlayerOrArrow("Arrow").get(0);
+        Player player = (Player) listOfAllObjects.findAllEnemiesOrPlayerOrArrowOrBullet("Player").get(0);
+        Arrow arrow = (Arrow) listOfAllObjects.findAllEnemiesOrPlayerOrArrowOrBullet("Arrow").get(0);
         changePositionOfObject(player, xOrY, minusOrPlus, tileView);
         changePositionOfObject(arrow, xOrY, minusOrPlus, tileView);
     }
 
     public void drawEnemy(ListOfAllObjects listOfAllObjects, ImageView imageView, TileView tileView){
         if(listOfAllObjects.findAllVisibleEnemies().size() < 2){
-            OurObject player = listOfAllObjects.findAllEnemiesOrPlayerOrArrow("Player").get(0);
+            OurObject player = listOfAllObjects.findAllEnemiesOrPlayerOrArrowOrBullet("Player").get(0);
             Point point = randPosition();
             listOfAllObjects.createEnemy(new Point(player.getPoint().getX() + point.getX(), player.getPoint().getY() + point.getY()), imageView);
             draw(listOfAllObjects.findAllUnVisibleEnemies().get(0), tileView);
@@ -65,15 +69,15 @@ public class DrawingHelper {
     }
 
     private void drawArrow(ListOfAllObjects listOfAllObjects, TileView tileView){
-        OurObject arrow = listOfAllObjects.findAllEnemiesOrPlayerOrArrow("Arrow").get(0);
-        OurObject player = listOfAllObjects.findAllEnemiesOrPlayerOrArrow("Player").get(0);
+        OurObject arrow = listOfAllObjects.findAllEnemiesOrPlayerOrArrowOrBullet("Arrow").get(0);
+        OurObject player = listOfAllObjects.findAllEnemiesOrPlayerOrArrowOrBullet("Player").get(0);
 
         arrow.setPoint(new Point(player.getPoint().getX(), player.getPoint().getY()));
         draw(arrow, tileView);
     }
 
     private void removeOldEnemiesFromMap(ListOfAllObjects listOfAllObjects, TileView tileView){
-        Stream.stream(listOfAllObjects.findAllEnemiesOrPlayerOrArrow("Enemy"))
+        Stream.stream(listOfAllObjects.findAllEnemiesOrPlayerOrArrowOrBullet("Enemy"))
                 .filter(ListOfAllObjects::filterVisible)
                 .forEach((Action1<OurObject>) o -> tileView.removeMarker(o.getMarker()));
     }

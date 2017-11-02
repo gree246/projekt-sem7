@@ -28,16 +28,16 @@ public class ImageTransformationHelper {
         }
 
         // rotacja strzałki
-        OurObject player = listOfAllObjects.findAllEnemiesOrPlayerOrArrow("Player").get(0);
+        OurObject player = listOfAllObjects.findAllEnemiesOrPlayerOrArrowOrBullet("Player").get(0);
         rotateObject(player, rightDirection);
-        OurObject arrow = listOfAllObjects.findAllEnemiesOrPlayerOrArrow("Arrow").get(0);
+        OurObject arrow = listOfAllObjects.findAllEnemiesOrPlayerOrArrowOrBullet("Arrow").get(0);
         rotateObject(arrow, rightDirection);
     }
 
     private void rotateAllVisibleEnemies(ListOfAllObjects listOfAllObjects){
         Stream.stream(listOfAllObjects.findAllVisibleEnemies()).
                 forEach((Action1< OurObject>) o -> rotateImageByAngle(o.getImageView(), listOfAllObjects.
-                        findAllEnemiesOrPlayerOrArrow("Player").get(0).getImageView().getRotation()));
+                        findAllEnemiesOrPlayerOrArrowOrBullet("Player").get(0).getImageView().getRotation()));
     }
 
     private void rotateObject(OurObject ourObject, boolean rightDirection){

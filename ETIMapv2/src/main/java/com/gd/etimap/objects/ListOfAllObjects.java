@@ -31,11 +31,13 @@ public class ListOfAllObjects {
         listOfOurObjects = new ArrayList<>();
     }
 
-    public List<OurObject> findAllEnemiesOrPlayerOrArrow(String name){
+    public List<OurObject> findAllEnemiesOrPlayerOrArrowOrBullet(String name){
         if(name.equalsIgnoreCase("Enemy"))
             return Stream.stream(this.listOfOurObjects).filter(r -> filterEnemies(r)).collect(toList());
         if(name.equalsIgnoreCase("Arrow"))
             return Stream.stream(this.listOfOurObjects).filter(r -> filterArrow(r)).collect(toList());
+        if(name.equalsIgnoreCase("Bullet"))
+            return Stream.stream(this.listOfOurObjects).filter(r -> filterBullet(r)).collect(toList());
         return Stream.stream(this.listOfOurObjects).filter(r -> filterPlayer(r)).collect(toList());
     }
 
@@ -44,14 +46,18 @@ public class ListOfAllObjects {
     }
 
     public List<OurObject> findAllVisibleEnemies(){
-        return Stream.stream(findAllEnemiesOrPlayerOrArrow("Enemy")).filter(e -> filterVisible(e)).collect(toList());
+        return Stream.stream(findAllEnemiesOrPlayerOrArrowOrBullet("Enemy")).filter(e -> filterVisible(e)).collect(toList());
     }
     public List<OurObject> findAllUnVisibleEnemies(){
-        return Stream.stream(findAllEnemiesOrPlayerOrArrow("Enemy")).filter(e -> filterUnVisible(e)).collect(toList());
+        return Stream.stream(findAllEnemiesOrPlayerOrArrowOrBullet("Enemy")).filter(e -> filterUnVisible(e)).collect(toList());
     }
 
     public OurObject findObjectById(int id){
         return Stream.stream(this.listOfOurObjects).filter(e -> filterById(e, id)).collect(toList()).get(0);
+    }
+
+    private boolean filterBullet(OurObject ourObject){
+        return ourObject instanceof Bullet;
     }
 
     private boolean filterById(OurObject ourObject, int id){
@@ -80,6 +86,10 @@ public class ListOfAllObjects {
 
     private boolean filterPlayer(OurObject ourObject){
         return ourObject instanceof Player;
+    }
+
+    public void createBullet(ImageView imageView){
+        listOfOurObjects.add(new Bullet(new Point(0, 0), "1", imageView, null));
     }
 
     public void createArrow(ImageView imageView){

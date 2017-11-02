@@ -3,7 +3,6 @@ package com.gd.etimap.helpers;
 import android.content.Context;
 import android.widget.ImageView;
 
-import com.gd.etimap.R;
 import com.gd.etimap.atributtes.Point;
 import com.gd.etimap.objects.Enemy;
 import com.gd.etimap.objects.ListOfAllObjects;
@@ -36,8 +35,8 @@ public class ShootingHelper {
         tweenty = imageTransformationHelper.createImageView(resTweenty, context, false);
     }
 
-    public void shoot(ListOfAllObjects listOfAllObjects, TileView tileView, Context context){
-        Enemy shootedEnemy = (Enemy) isShooted(listOfAllObjects, tileView, context);
+    public void shoot(ListOfAllObjects listOfAllObjects, TileView tileView){
+        Enemy shootedEnemy = (Enemy) isShooted(listOfAllObjects);
         if(shootedEnemy != null){
             if(removeAllDeadEnemies(listOfAllObjects, tileView)){
                 changePictureOfEnemy(shootedEnemy, tileView);
@@ -54,31 +53,32 @@ public class ShootingHelper {
         return listOfObjectsWithZeroHp.isEmpty();
     }
 
-    private OurObject isShooted(ListOfAllObjects listOfAllObjects, TileView tileView, Context context){
-        OurObject player = listOfAllObjects.findAllEnemiesOrPlayerOrArrow("Player").get(0);
+    private OurObject isShooted(ListOfAllObjects listOfAllObjects){
+        OurObject player = listOfAllObjects.findAllEnemiesOrPlayerOrArrowOrBullet("Player").get(0);
         List<Point> listOfShootedPoints = countListOfShootedPoints(player);
+        List<Point> helperList = new ArrayList<>();
         List<OurObject> listOfAllVisibleEnemies = listOfAllObjects.findAllVisibleEnemies();
-
-        tileView.addMarker(imageTransformationHelper.createImageView(R.mipmap.ic_launcher_round,context,false)
-                ,listOfShootedPoints.get(5).getX(),listOfShootedPoints.get(5).getY(), -0.5f, -0.5f);
-
-        tileView.addMarker(imageTransformationHelper.createImageView(R.mipmap.ic_launcher_round,context,false)
-                ,listOfShootedPoints.get(10).getX(),listOfShootedPoints.get(10).getY(), -0.5f, -0.5f);
-
-        tileView.addMarker(imageTransformationHelper.createImageView(R.mipmap.ic_launcher_round,context,false)
-                ,listOfShootedPoints.get(15).getX(),listOfShootedPoints.get(15).getY(), -0.5f, -0.5f);
 
         double pXY = 0;
         double oXY = 0;
+        OurObject objectToReturn = null;
         for(Point p: listOfShootedPoints){
             for(OurObject o: listOfAllVisibleEnemies){
+                helperList.add(p);
                 pXY = p.getX() + p.getY();
                 oXY = o.getPoint().getX() + o.getPoint().getY();
-                if(Math.abs(pXY - oXY) < 20)
-                    return o;
+                if(Math.abs(pXY - oXY) < 10){
+                    AnimationOfBulletHelper.listOfShootedPoints.addAll(helperList);
+                    objectToReturn = o;
+                    break;
+                }
             }
         }
-        return null;
+        if(AnimationOfBulletHelper.listOfShootedPoints.isEmpty())
+            AnimationOfBulletHelper.listOfShootedPoints = listOfShootedPoints;
+
+        AnimationOfBulletHelper.isAnimationOfBullet = true;
+        return objectToReturn;
     }
 
     private List<Point> countListOfShootedPoints(OurObject player){
@@ -112,7 +112,7 @@ public class ShootingHelper {
         double yPlayer = player.getPoint().getX();
         double b = yPlayer - (tangens*xPlayer);
         counter += number;
-        xPlayer += (counter+10);
+        xPlayer += counter;
         yPlayer = tangens*xPlayer + b;
 
         return new double[]{counter, yPlayer, xPlayer};

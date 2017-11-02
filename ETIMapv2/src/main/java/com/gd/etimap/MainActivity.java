@@ -8,6 +8,7 @@ import android.view.ScaleGestureDetector;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 
+import com.gd.etimap.helpers.AnimationOfBulletHelper;
 import com.gd.etimap.helpers.CreateObjectsHelper;
 import com.gd.etimap.helpers.DrawingHelper;
 import com.gd.etimap.helpers.ImageTransformationHelper;
@@ -19,6 +20,8 @@ import com.qozix.tileview.TileView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.gd.etimap.helpers.AnimationOfBulletHelper.isAnimationOfBullet;
+
 public class MainActivity extends AppCompatActivity {
 
     @BindView(R2.id.rotateLeft_id)
@@ -28,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R2.id.buttonGun)
     Button gunButton;
 
-    double counter = 0;
+    double counter = -1;
 
     private ListOfAllObjects listOfAllObjects = new ListOfAllObjects();
     private TileView tileView = null;
@@ -37,8 +40,9 @@ public class MainActivity extends AppCompatActivity {
     private CreateObjectsHelper createObjectsHelper = new CreateObjectsHelper();
     private ImageTransformationHelper imageTransformationHelper = new ImageTransformationHelper();
     private ShootingHelper shootingHelper;
+    AnimationOfBulletHelper animationOfBulletHelper = new AnimationOfBulletHelper();
 
-    private static final int updateGUIInterval  = 50;
+    private static int updateGUIInterval  = 50;
     private updateGUIThread updateGUIThread=new updateGUIThread();
     private Handler updateGUIHandler = new Handler();
 
@@ -50,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
 
         shootingHelper = new ShootingHelper(R.mipmap.enemy1, R.mipmap.enemy2, R.mipmap.enemy3, R.mipmap.enemy4, this);
         createObjectsHelper.createPlayerAndArrowObjects(listOfAllObjects, imageTransformationHelper.createImageView(R.mipmap.ic_launcher, this, false), imageTransformationHelper.createImageView(R.mipmap.arrow, this, true));
+        createObjectsHelper.createBullet(listOfAllObjects, imageTransformationHelper.createImageView(R.mipmap.ic_launcher_round, this, false));
         drawingHelper.drawPlayerAndArrowObjects(listOfAllObjects, tileView);
 
         doListenersAndTileLayout();
@@ -99,10 +104,22 @@ public class MainActivity extends AppCompatActivity {
 
         rotateLeftButton.setOnClickListener(view -> imageTransformationHelper.rotate(listOfAllObjects, false, tileView));
         rotateRightButton.setOnClickListener(view -> imageTransformationHelper.rotate(listOfAllObjects, true, tileView));
-        gunButton.setOnClickListener(view -> shootingHelper.shoot(listOfAllObjects, tileView, this));
+        gunButton.setOnClickListener(view -> shootingHelper.shoot(listOfAllObjects, tileView));
     }
 
     private void doAnimation(){
+        if(isAnimationOfBullet){
+            updateGUIInterval = 10;
+            counter++;
+            animationOfBulletHelper.doAnimationOfBullet(listOfAllObjects, counter, tileView);
+            if(counter == (AnimationOfBulletHelper.listOfShootedPoints.size()-1)){
+                counter = -1;
+                isAnimationOfBullet = false;
+                AnimationOfBulletHelper.listOfShootedPoints.clear();
+                updateGUIInterval = 50;
+            }
+        }
+
         if(Math.random() < 0.01){
             drawingHelper.drawEnemy(listOfAllObjects, imageTransformationHelper.createImageView(R.mipmap.enemy0, this, false), tileView);
         }
@@ -111,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
     class updateGUIThread implements Runnable {
         @Override
         public void run() {
-            OurObject player = listOfAllObjects.findAllEnemiesOrPlayerOrArrow("Player").get(0);
+            OurObject player = listOfAllObjects.findAllEnemiesOrPlayerOrArrowOrBullet("Player").get(0);
             tileView.slideToAndCenterWithScale(player.getPoint().getX(),player.getPoint().getY(),1f);
             tileView.scrollToAndCenter(player.getPoint().getX(),player.getPoint().getY());
             doAnimation();
