@@ -12,16 +12,18 @@ import android.os.Bundle;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiInfo;
 import android.content.Context;
+import android.util.Log;
 import android.util.StringBuilderPrinter;
-import android.view.DragEvent;
 import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.qozix.tileview.TileView;
-import com.qozix.tileview.markers.MarkerLayout;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -36,14 +38,19 @@ import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 
-import static android.R.attr.x;
-import static android.R.attr.y;
+import okhttp3.FormBody;
+import okhttp3.HttpUrl;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
 
 
-    TextView wifiSignal;
+//    TextView wifiSignal;
     WifiManager wifiManager;
     private Timer timer;
     private TimerTask timerTask;
@@ -52,38 +59,46 @@ public class MainActivity extends AppCompatActivity {
     private EditText wyslijIPET;
     private Button sendButton;
     private String resault="";
+    private TileView tileView = null;
+    private int centerX=0;
+    private int centerY=0;
+    private int floor=0;
     MyBroadcastReciver reciver = new MyBroadcastReciver();;
-    private TileView tileView;
-    private MarkerLayout location;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        wifiSignal = (TextView)findViewById(R.id.wifiSignal);
-        nazwaPomiaruET = (EditText) findViewById(R.id.numerPomiaruId) ;
-        wyslijIPET = (EditText) findViewById(R.id.IPwyslijId) ;
         SharedPreferences settings = getSharedPreferences("nanana", 0);
-        wyslijIP= settings.getString("wyslijIp","192.168.1.33");
+
+        nazwaPomiaruET = (EditText) findViewById(R.id.numerPomiaruId) ;
+        nazwaPomiaru= settings.getString("nawaPomiaru","a001");
+        nazwaPomiaruET.setText(nazwaPomiaru);
+
+        wyslijIPET = (EditText) findViewById(R.id.IPwyslijId) ;
+        wyslijIP= settings.getString("wyslijIp","95.160.153.43");
         wyslijIPET.setText(wyslijIP);
 
-        tileView = (TileView) findViewById(R.id.MapId);
-
-        tileView.setSize( 8192, 8192 );  // the original size of the untiled imag
-        tileView.defineBounds(0,100,0,100);
+        tileView = new TileView(this);
+        tileView.setSize( 8192, 8192 );  // the original size of the untiled image
         tileView.addDetailLevel( 1f, "tiles/tile_%d_%d.png", 256, 256);
-        location= new MarkerLayout(this);
-//        tileView.setLongClickable(true);
-//        tileView.
-//
-//        tileView.setOnLongClickListener(new View.OnLongClickListener() {
-//            @Override
-//            public boolean onLongClick(View view) {
-//                tileView.addMarker(location,view.getX(),view.getY(),null,null);
-//                return false;
-//            }
-//        });
+        tileView.slideToAndCenterWithScale(4000,4000,0.8f);
+        tileView.scrollToAndCenter(4000,4000);
+        final RelativeLayout tileLayout = (RelativeLayout) findViewById(R.id.MapLayoutId) ;
+        tileLayout.addView(tileView);
+        ImageView pozycja = new ImageView(this);
+        pozycja.setImageResource(R.drawable.crosshair2);
+        pozycja.setMaxWidth(30);
+        pozycja.setMaxHeight(30);
+        tileLayout.addView(pozycja);
+
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) pozycja.getLayoutParams();
+        params.addRule(RelativeLayout.CENTER_IN_PARENT,
+                RelativeLayout.TRUE);
+        pozycja.setLayoutParams(params);
+
+
 
 
         sendButton = (Button) findViewById(R.id.sendButtonId);
@@ -91,13 +106,23 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 wifiManager.startScan();
+                wyslijIP=wyslijIPET.getText().toString();
+                centerX=tileView.getScrollX();
+                centerY=tileView.getScrollY();
+                nazwaPomiaru=nazwaPomiaruET.getText().toString();
+                nazwaPomiaruET.setText(nazwaPomiaru.substring(0,1)+String.format("%03d", Integer.parseInt(nazwaPomiaru.substring(1))+1));
+                SharedPreferences settings = getSharedPreferences("nanana", 0);
+                SharedPreferences.Editor editor = settings.edit();
+                editor.putString("nazwaPomiaru", nazwaPomiaruET.getText().toString());
+                editor.putString("wyslijIp", wyslijIP);
+                editor.commit();
+//                nazwaPomiaruET.setText(Integer.toString(tileView.getScrollX()));
 
             }
         });
 
 
-        nazwaPomiaru= settings.getString("nazwaPomiaru","a001");
-        nazwaPomiaruET.setText(nazwaPomiaru);
+
 
         wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
         registerReceiver(reciver, new IntentFilter(wifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
@@ -130,25 +155,27 @@ public class MainActivity extends AppCompatActivity {
 //    }
 
 
-    class MyBroadcastReciver extends BroadcastReceiver
-    {
+    class MyBroadcastReciver extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context context, Intent intent) {
             StringBuffer buffer = new StringBuffer();
             List<ScanResult> list = wifiManager.getScanResults();
-            for(ScanResult scanResult : list)
-            {
-                buffer.append(scanResult.SSID);
-                buffer.append("\n\n");
+            for (ScanResult scanResult : list) {
+                buffer.append(scanResult.BSSID);
+                buffer.append(" ");
+                buffer.append(scanResult.level);
+                buffer.append(" ");
+                buffer.append(scanResult.frequency);
+                buffer.append(";");
             }
-            wifiSignal.setText(buffer);
-            resault=buffer.toString();
-            sendData(resault);
-
+//            wifiSignal.setText(buffer);
+            resault = buffer.toString();
+            sendDataHttp(resault);
 
 
         }
+
         private void sendData(final String buffero) {
             wyslijIP = wyslijIPET.getText().toString();
             AsyncTask asyncTask = new AsyncTask() {
@@ -161,7 +188,7 @@ public class MainActivity extends AppCompatActivity {
                     Date time = new Date();
                     String currentDateandTime = sdf.format(time);
 
-                    String message = buffero;
+                    String message = nazwaPomiaru + ";" + Integer.toString(floor) + ";" + Integer.toString(centerX) + ";" + Integer.toString(centerY) + "|" + buffero;
 
 
                     Socket socket = null;
@@ -170,9 +197,9 @@ public class MainActivity extends AppCompatActivity {
 
                     try {
                         socket = new Socket();
-                        socket.connect(new InetSocketAddress(wyslijIP, 8888), 2000);
+                        socket.connect(new InetSocketAddress(wyslijIP, 37777), 2000);
                         os = new DataOutputStream(socket.getOutputStream());
-                        // is = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                        is = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
                     } catch (UnknownHostException e) {
                         // RPiStatus="Connection Error";
@@ -180,13 +207,13 @@ public class MainActivity extends AppCompatActivity {
                         //RPiStatus = "Connection Error";
                     }
 
-                    if (socket == null || os == null ){//|| is == null) {
+                    if (socket == null || os == null || is == null) {
                         return null;
                     }
 
-                    try{
+                    try {
                         os.writeChars(message);
-                        //String responseLine = is.readLine();
+                        String responseLine = is.readLine();
 
 //                    if(responseLine!=null) {
 //                        String[] values = responseLine.split(";");
@@ -213,7 +240,7 @@ public class MainActivity extends AppCompatActivity {
 //                        }
 //                    }
                         os.close();
-                        // is.close();
+                        is.close();
                         socket.close();
                     } catch (UnknownHostException e) {
                         // TODO Auto-generated catch block
@@ -229,6 +256,75 @@ public class MainActivity extends AppCompatActivity {
 
             asyncTask.execute();
 
+        }
+
+        //GET network request
+        public String GET(OkHttpClient client, HttpUrl url) throws IOException {
+            Request request = new Request.Builder()
+                    .url(url)
+                    .build();
+            Response response = client.newCall(request).execute();
+            return response.body().string();
+        }
+
+        //POST network request
+        public String POST(OkHttpClient client, HttpUrl url, RequestBody body) throws IOException {
+            Request request = new Request.Builder()
+                    .url(url)
+                    .post(body)
+                    .build();
+            Response response = client.newCall(request).execute();
+            return response.body().string();
+        }
+
+        class mAsyncTask extends AsyncTask<String, Void,Void>{
+            @Override
+            protected Void doInBackground(String... params) {
+                String buf=params[0];
+                OkHttpClient client = new OkHttpClient.Builder()
+                        .connectTimeout(1, TimeUnit.SECONDS)
+                        .writeTimeout(1, TimeUnit.SECONDS)
+                        .readTimeout(1, TimeUnit.SECONDS)
+                        .build();
+
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+                Date time = new Date();
+                String currentDateandTime = sdf.format(time);
+                Integer currentTimeMiliseconds = Integer.parseInt(currentDateandTime.split("\\.")[1]);
+
+
+                String message = nazwaPomiaru + ";" + Integer.toString(floor) + ";" + Integer.toString(centerX) + ";" + Integer.toString(centerY) + "|" + buf+"\n";
+
+
+                RequestBody body = new FormBody.Builder()
+                        .add("action", "login")
+                        .add("format", "json")
+                        .add("message", message)
+                        .build();
+
+
+                HttpUrl url = new HttpUrl.Builder()
+                        .scheme("http") //http
+                        .host("etiinawazja.000webhostapp.com")
+                        .port(80)
+                        .addPathSegment("saveWiFi2File.php")//adds "/pathSegment" at the end of hostname
+                        .build();
+                try {
+                    Log.d("sending", POST(client, url, body));
+
+                } catch (IOException e) {
+//                    e.printStackTrace();
+                    Log.d("sending", "error");
+                } catch (Exception e) {
+                    Log.e("OTHER EXCEPTIONS", e.toString());
+                }
+                return null;
+            }
+        }
+
+        private void sendDataHttp(String buffero) {
+            mAsyncTask asyncTask = new mAsyncTask();
+            asyncTask.execute(buffero);
         }
     }
 
