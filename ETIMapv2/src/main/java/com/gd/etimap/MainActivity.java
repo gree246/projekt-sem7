@@ -8,9 +8,11 @@ import android.view.ScaleGestureDetector;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 
+import com.gd.etimap.helpers.AnimationOfBulletHelper;
 import com.gd.etimap.helpers.CreateObjectsHelper;
 import com.gd.etimap.helpers.DrawingHelper;
 import com.gd.etimap.helpers.ImageTransformationHelper;
+import com.gd.etimap.helpers.ShootingHelper;
 import com.gd.etimap.objects.ListOfAllObjects;
 import com.gd.etimap.objects.OurObject;
 import com.qozix.tileview.TileView;
@@ -18,13 +20,18 @@ import com.qozix.tileview.TileView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.gd.etimap.helpers.AnimationOfBulletHelper.isAnimationOfBullet;
+
 public class MainActivity extends AppCompatActivity {
 
     @BindView(R2.id.rotateLeft_id)
     Button rotateLeftButton;
     @BindView(R2.id.rotateRight_id)
     Button rotateRightButton;
+    @BindView(R2.id.buttonGun)
+    Button gunButton;
 
+    double counter = -1;
 
     private ListOfAllObjects listOfAllObjects = new ListOfAllObjects();
     private TileView tileView = null;
@@ -32,12 +39,12 @@ public class MainActivity extends AppCompatActivity {
     private DrawingHelper drawingHelper = new DrawingHelper();
     private CreateObjectsHelper createObjectsHelper = new CreateObjectsHelper();
     private ImageTransformationHelper imageTransformationHelper = new ImageTransformationHelper();
+    private ShootingHelper shootingHelper;
+    AnimationOfBulletHelper animationOfBulletHelper = new AnimationOfBulletHelper();
 
-    private static final int updateGUIInterval  = 50;
+    private static int updateGUIInterval  = 50;
     private updateGUIThread updateGUIThread=new updateGUIThread();
     private Handler updateGUIHandler = new Handler();
-
-    private int counter = 0;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate( savedInstanceState );
@@ -45,7 +52,9 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         createTileView();
 
+        shootingHelper = new ShootingHelper(R.mipmap.enemy1, R.mipmap.enemy2, R.mipmap.enemy3, R.mipmap.enemy4, this);
         createObjectsHelper.createPlayerAndArrowObjects(listOfAllObjects, imageTransformationHelper.createImageView(R.mipmap.ic_launcher, this, false), imageTransformationHelper.createImageView(R.mipmap.arrow, this, true));
+        createObjectsHelper.createBullet(listOfAllObjects, imageTransformationHelper.createImageView(R.mipmap.ic_launcher_round, this, false));
         drawingHelper.drawPlayerAndArrowObjects(listOfAllObjects, tileView);
 
         doListenersAndTileLayout();
@@ -82,59 +91,47 @@ public class MainActivity extends AppCompatActivity {
         tileLayout.addView(tileView);
 
         Button bLeft = (Button) findViewById(R.id.buttonLeft_id) ;
-        bLeft.setOnClickListener(view -> drawingHelper.changePositionOfPlayer(listOfAllObjects, "x", "-"));
+        bLeft.setOnClickListener(view -> drawingHelper.changePositionOfPlayer(listOfAllObjects, "x", "-", tileView));
 
         Button bRight = (Button) findViewById(R.id.buttonRight_id) ;
-        bRight.setOnClickListener(view -> drawingHelper.changePositionOfPlayer(listOfAllObjects, "x", "+"));
+        bRight.setOnClickListener(view -> drawingHelper.changePositionOfPlayer(listOfAllObjects, "x", "+", tileView));
 
         Button bUp = (Button) findViewById(R.id.buttonUp_id) ;
-        bUp.setOnClickListener(view -> drawingHelper.changePositionOfPlayer(listOfAllObjects, "y", "-"));
+        bUp.setOnClickListener(view -> drawingHelper.changePositionOfPlayer(listOfAllObjects, "y", "-", tileView));
 
         Button bDown = (Button) findViewById(R.id.buttonDown_id) ;
-        bDown.setOnClickListener(view -> drawingHelper.changePositionOfPlayer(listOfAllObjects, "y", "+"));
+        bDown.setOnClickListener(view -> drawingHelper.changePositionOfPlayer(listOfAllObjects, "y", "+", tileView));
 
         rotateLeftButton.setOnClickListener(view -> imageTransformationHelper.rotate(listOfAllObjects, false, tileView));
         rotateRightButton.setOnClickListener(view -> imageTransformationHelper.rotate(listOfAllObjects, true, tileView));
+        gunButton.setOnClickListener(view -> shootingHelper.shoot(listOfAllObjects, tileView));
     }
 
     private void doAnimation(){
-        counter++;
-        if(counter < 300){
-            drawingHelper.changePositionOfPlayer(listOfAllObjects, "x", "+");
-        }else{
-            drawingHelper.changePositionOfPlayer(listOfAllObjects, "x", "-");
-            if(counter == 600){
-                counter = 0;
+        if(isAnimationOfBullet){
+            updateGUIInterval = 10;
+            counter++;
+            animationOfBulletHelper.doAnimationOfBullet(listOfAllObjects, counter, tileView);
+            if(counter == (AnimationOfBulletHelper.listOfShootedPoints.size()-1)){
+                counter = -1;
+                isAnimationOfBullet = false;
+                AnimationOfBulletHelper.listOfShootedPoints.clear();
+                updateGUIInterval = 50;
             }
         }
-        if(Math.random() < 0.02){
+
+        if(Math.random() < 0.01){
             drawingHelper.drawEnemy(listOfAllObjects, imageTransformationHelper.createImageView(R.mipmap.enemy0, this, false), tileView);
         }
-    }
-
-    private void updateMarker(OurObject ourObject){
-        double x = ourObject.getPoint().getX();
-        double y = ourObject.getPoint().getY();
-
-        tileView.removeMarker(ourObject.getImageView());
-        tileView.addMarker(ourObject.getImageView(),x,y,-0.5f,-0.5f);
-        tileView.scrollToAndCenter(x,y);
-        tileView.slideToAndCenterWithScale(x,y,1f);
-        //#######################################################3
-        //tutaj robimy dokładnie to samo co w DrawingHelper.draw
-        // trochę bez sensu jest  podwajać
-    }
-
-    private void doSomeCrazyStuffInEachIterationOfAnimation(){
-        updateMarker(listOfAllObjects.findAllEnemiesOrPlayerOrArrow("Player").get(0));
-        updateMarker(listOfAllObjects.findAllEnemiesOrPlayerOrArrow("Arrow").get(0));
     }
 
     class updateGUIThread implements Runnable {
         @Override
         public void run() {
+            OurObject player = listOfAllObjects.findAllEnemiesOrPlayerOrArrowOrBullet("Player").get(0);
+            tileView.slideToAndCenterWithScale(player.getPoint().getX(),player.getPoint().getY(),1f);
+            tileView.scrollToAndCenter(player.getPoint().getX(),player.getPoint().getY());
             doAnimation();
-            doSomeCrazyStuffInEachIterationOfAnimation();
             updateGUIHandler.postDelayed(this, updateGUIInterval);
         }
     }

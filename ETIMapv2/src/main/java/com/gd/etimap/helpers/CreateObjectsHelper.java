@@ -19,4 +19,8 @@ public class CreateObjectsHelper {
         listOfAllObjects.createPlayer(new Point(PLAYER_X, PLAYER_Y), imageViewPlayer);
         listOfAllObjects.createArrow(imageViewArrow);
     }
+
+    public void createBullet(ListOfAllObjects listOfAllObjects, ImageView imageViewBullet){
+        listOfAllObjects.createBullet(imageViewBullet);
+    }
 }
