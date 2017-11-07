@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R2.id.buttonGun)
     Button gunButton;
 
-    double counter = -1;
+    public static volatile double counter = -1;
 
     private ListOfAllObjects listOfAllObjects = new ListOfAllObjects();
     private TileView tileView = null;
@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void doAnimation(){
-        if(isAnimationOfBullet){
+        if(isAnimationOfBullet && AnimationOfBulletHelper.listOfShootedPoints.size() > 1){
             updateGUIInterval = 10;
             counter++;
             animationOfBulletHelper.doAnimationOfBullet(listOfAllObjects, counter, tileView);

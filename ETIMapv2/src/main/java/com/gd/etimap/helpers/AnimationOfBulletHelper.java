@@ -25,7 +25,11 @@ public class AnimationOfBulletHelper {
         bullet.setPoint(listOfShootedPoints.get((int) counter));
 
         if(counter == 0){
-            drawingHelper.draw(bullet, tileView);
+            try{
+                drawingHelper.draw(bullet, tileView);
+            }catch (Exception e) {
+                e.printStackTrace();
+            }
         }else if(counter == (listOfShootedPoints.size()-1)){
             tileView.removeMarker(bullet.getMarker());
         }else {

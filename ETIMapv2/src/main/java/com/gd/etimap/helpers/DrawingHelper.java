@@ -28,7 +28,7 @@ public class DrawingHelper {
     public void draw(OurObject ourObject, TileView tileView){
         View marker = tileView.addMarker(ourObject.getImageView(),ourObject.getPoint().getX(),ourObject.getPoint().getY(),-0.5f,-0.5f);
         ourObject.setMarker(marker);
-        if(ourObject instanceof Enemy)
+        if(ourObject instanceof Enemy && !((Enemy) ourObject).isVisible())
             ((Enemy) ourObject).setVisible(true);
     }
 
