@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         tileView.setSize( 8192, 8192 );  // the original size of the untiled image
-        tileView.addDetailLevel( 1f, "tiles/tile_%d_%d.png", 256, 256);
+        tileView.addDetailLevel( 1f, "floor1/tile_1_%d_%d.png", 256, 256);
 
     }
 
