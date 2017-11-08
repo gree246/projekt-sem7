@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.gd.etimap.helpers.AnimationOfBulletHelper;
@@ -54,7 +55,10 @@ public class MainActivity extends AppCompatActivity {
 
         shootingHelper = new ShootingHelper(R.mipmap.enemy1, R.mipmap.enemy2, R.mipmap.enemy3, R.mipmap.enemy4, this);
         createObjectsHelper.createPlayerAndArrowObjects(listOfAllObjects, imageTransformationHelper.createImageView(R.mipmap.ic_launcher, this, false), imageTransformationHelper.createImageView(R.mipmap.arrow, this, true));
-        createObjectsHelper.createBullet(listOfAllObjects, imageTransformationHelper.createImageView(R.mipmap.ic_launcher_round, this, false));
+        ImageView bullet = imageTransformationHelper.createImageView(R.mipmap.bullet2 , this, false);
+        bullet.setScaleX((float)0.3);
+        bullet.setScaleY((float)0.3);
+        createObjectsHelper.createBullet(listOfAllObjects, bullet);
         drawingHelper.drawPlayerAndArrowObjects(listOfAllObjects, tileView);
 
         doListenersAndTileLayout();
