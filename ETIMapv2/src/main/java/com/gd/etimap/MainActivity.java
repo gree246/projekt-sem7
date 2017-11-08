@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
         createTileView();
 
         shootingHelper = new ShootingHelper(R.mipmap.enemy1, R.mipmap.enemy2, R.mipmap.enemy3, R.mipmap.enemy4, this);
-        createObjectsHelper.createPlayerAndArrowObjects(listOfAllObjects, imageTransformationHelper.createImageView(R.mipmap.ic_launcher, this, false), imageTransformationHelper.createImageView(R.mipmap.arrow, this, true));
+        createObjectsHelper.createPlayerAndArrowObjects(listOfAllObjects, imageTransformationHelper.createImageView(R.mipmap.player, this, false), imageTransformationHelper.createImageView(R.mipmap.arrow, this, true));
         ImageView bullet = imageTransformationHelper.createImageView(R.mipmap.bullet2 , this, false);
         bullet.setScaleX((float)0.3);
         bullet.setScaleY((float)0.3);
