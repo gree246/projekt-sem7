@@ -14,6 +14,7 @@ import com.gd.etimap.helpers.CreateObjectsHelper;
 import com.gd.etimap.helpers.DrawingHelper;
 import com.gd.etimap.helpers.ImageTransformationHelper;
 import com.gd.etimap.helpers.ShootingHelper;
+import com.gd.etimap.helpers.SiHelper;
 import com.gd.etimap.objects.ListOfAllObjects;
 import com.gd.etimap.objects.OurObject;
 import com.qozix.tileview.TileView;
@@ -41,7 +42,8 @@ public class MainActivity extends AppCompatActivity {
     private CreateObjectsHelper createObjectsHelper = new CreateObjectsHelper();
     private ImageTransformationHelper imageTransformationHelper = new ImageTransformationHelper();
     private ShootingHelper shootingHelper;
-    AnimationOfBulletHelper animationOfBulletHelper = new AnimationOfBulletHelper();
+    private AnimationOfBulletHelper animationOfBulletHelper = new AnimationOfBulletHelper();
+    private SiHelper siHelper = new SiHelper();
 
     private static int updateGUIInterval  = 50;
     private updateGUIThread updateGUIThread=new updateGUIThread();
@@ -54,12 +56,12 @@ public class MainActivity extends AppCompatActivity {
         createTileView();
 
         shootingHelper = new ShootingHelper(R.mipmap.enemy1, R.mipmap.enemy2, R.mipmap.enemy3, R.mipmap.enemy4, this);
-        createObjectsHelper.createPlayerAndArrowObjects(listOfAllObjects, imageTransformationHelper.createImageView(R.mipmap.player, this, false), imageTransformationHelper.createImageView(R.mipmap.arrow, this, true));
-        ImageView bullet = imageTransformationHelper.createImageView(R.mipmap.bullet2 , this, false);
+        createObjectsHelper.createPlayer(listOfAllObjects, imageTransformationHelper.createImageView(R.mipmap.player2, this, false));
+        ImageView bullet = imageTransformationHelper.createImageView(R.mipmap.bullet , this, false);
         bullet.setScaleX((float)0.3);
         bullet.setScaleY((float)0.3);
         createObjectsHelper.createBullet(listOfAllObjects, bullet);
-        drawingHelper.drawPlayerAndArrowObjects(listOfAllObjects, tileView);
+        drawingHelper.drawPlayer(listOfAllObjects, tileView);
 
         doListenersAndTileLayout();
         updateGUIHandler.postDelayed(updateGUIThread, updateGUIInterval);
@@ -81,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         tileView.setSize( 8192, 8192 );  // the original size of the untiled image
-        tileView.addDetailLevel( 1f, "floor1/tile_1_%d_%d.png", 256, 256);
+        tileView.addDetailLevel( 1f, "tiles/tile_%d_%d.png", 256, 256);
 
     }
 
@@ -123,8 +125,11 @@ public class MainActivity extends AppCompatActivity {
                 updateGUIInterval = 50;
             }
         }
+        /*if(Math.random() < 0.5)
+            siHelper.doEnemySi(listOfAllObjects, tileView);*/
 
-        if(Math.random() < 0.01){
+
+        if(Math.random() < 0.02){
             drawingHelper.drawEnemy(listOfAllObjects, imageTransformationHelper.createImageView(R.mipmap.enemy0, this, false), tileView);
         }
     }
@@ -132,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
     class updateGUIThread implements Runnable {
         @Override
         public void run() {
-            OurObject player = listOfAllObjects.findAllEnemiesOrPlayerOrArrowOrBullet("Player").get(0);
+            OurObject player = listOfAllObjects.findAllEnemiesOrPlayerOrBullet("Player").get(0);
             tileView.slideToAndCenterWithScale(player.getPoint().getX(),player.getPoint().getY(),1f);
             tileView.scrollToAndCenter(player.getPoint().getX(),player.getPoint().getY());
             doAnimation();

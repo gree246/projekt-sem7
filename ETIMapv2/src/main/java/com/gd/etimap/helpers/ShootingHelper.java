@@ -1,7 +1,6 @@
 package com.gd.etimap.helpers;
 
 import android.content.Context;
-import android.widget.ImageView;
 
 import com.gd.etimap.atributtes.Point;
 import com.gd.etimap.objects.Enemy;
@@ -21,18 +20,20 @@ import solid.stream.Stream;
 
 public class ShootingHelper {
 
-    private static ImageView eighty;
-    private static ImageView sixty;
-    private static ImageView fourty;
-    private static ImageView tweenty;
+    private static int eighty;
+    private static int sixty;
+    private static int fourty;
+    private static int tweenty;
+    private Context context;
     private ImageTransformationHelper imageTransformationHelper = new ImageTransformationHelper();
     private DrawingHelper drawingHelper = new DrawingHelper();
 
     public ShootingHelper(int resEighty, int resSixty, int resFourty, int resTweenty, Context context) {
-        eighty = imageTransformationHelper.createImageView(resEighty, context, false);
-        sixty = imageTransformationHelper.createImageView(resSixty, context, false);
-        fourty = imageTransformationHelper.createImageView(resFourty, context, false);
-        tweenty = imageTransformationHelper.createImageView(resTweenty, context, false);
+        eighty = resEighty;
+        sixty = resSixty;
+        fourty = resFourty;
+        tweenty = resTweenty;
+        this.context = context;
     }
 
     public void shoot(ListOfAllObjects listOfAllObjects, TileView tileView){
@@ -53,7 +54,7 @@ public class ShootingHelper {
     }
 
     private OurObject isShooted(ListOfAllObjects listOfAllObjects){
-        OurObject player = listOfAllObjects.findAllEnemiesOrPlayerOrArrowOrBullet("Player").get(0);
+        OurObject player = listOfAllObjects.findAllEnemiesOrPlayerOrBullet("Player").get(0);
         List<Point> listOfShootedPoints = countListOfShootedPoints(player);
         List<Point> helperList = new ArrayList<>();
         List<OurObject> listOfAllVisibleEnemies = listOfAllObjects.findAllVisibleEnemies();
@@ -67,7 +68,7 @@ public class ShootingHelper {
             for(OurObject o: listOfAllVisibleEnemies){
                 rX = p.getX() - o.getPoint().getX();
                 rY = p.getY() - o.getPoint().getY();
-                if((Math.abs(rX) + Math.abs(rY)) < 25){
+                if((Math.abs(rX) + Math.abs(rY)) < 33){
                     AnimationOfBulletHelper.listOfShootedPoints = helperList;
                     objectToReturn = o;
                     break breakFromLoop;
@@ -126,23 +127,19 @@ public class ShootingHelper {
         tileView.removeMarker(enemy.getMarker());
         enemy = changePicture(enemy);
         enemy.setPoint(new Point(enemy.getPoint().getX() + 10, enemy.getPoint().getY() + 10));
-        try{
-            drawingHelper.draw(enemy, tileView);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+        drawingHelper.draw(enemy, tileView);
     }
 
     private Enemy changePicture(OurObject ourObject){
         int hp = ((Enemy) ourObject).getHp();
         if(hp <= 80 && hp > 60){
-            ourObject.setImageView(eighty);
+            ourObject.setImageView(imageTransformationHelper.createImageView(eighty, context, false));
         }else if(hp <= 60 && hp > 40){
-            ourObject.setImageView(sixty);
+            ourObject.setImageView(imageTransformationHelper.createImageView(sixty, context, false));
         }else if(hp <= 40 && hp > 20){
-            ourObject.setImageView(fourty);
+            ourObject.setImageView(imageTransformationHelper.createImageView(fourty, context, false));
         }else if(hp <= 20){
-            ourObject.setImageView(tweenty);
+            ourObject.setImageView(imageTransformationHelper.createImageView(tweenty, context, false));
         }
         return (Enemy) ourObject;
     }
