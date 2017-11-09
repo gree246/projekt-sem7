@@ -1,0 +1,7 @@
+#Sun Oct 29 14:53:24 CET 2017
+base.0=C\:\\projekt-sem7\\WiFiLocalization\\build\\intermediates\\transforms\\dex\\debug\\folders\\1000\\10000\\instant-run-bootstrap_d350727153d9c4ddbefe4e6502e4a0363d8dc9b6
+renamed.1=classes2.dex
+renamed.0=classes.dex
+file.1=C\:\\projekt-sem7\\WiFiLocalization\\build\\intermediates\\transforms\\dex\\debug\\folders\\1000\\10000\\instant-run_3d31d689b98238905b0e6dd419bbf4c16b6617ec\\classes.dex
+base.1=C\:\\projekt-sem7\\WiFiLocalization\\build\\intermediates\\transforms\\dex\\debug\\folders\\1000\\10000\\instant-run_3d31d689b98238905b0e6dd419bbf4c16b6617ec
+file.0=C\:\\projekt-sem7\\WiFiLocalization\\build\\intermediates\\transforms\\dex\\debug\\folders\\1000\\10000\\instant-run-bootstrap_d350727153d9c4ddbefe4e6502e4a0363d8dc9b6\\classes.dex
