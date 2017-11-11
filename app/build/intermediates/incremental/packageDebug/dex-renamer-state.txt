@@ -1,0 +1,7 @@
+#Wed Oct 18 10:40:43 CEST 2017
+base.0=C\:\\projekt-sem7\\app\\build\\intermediates\\transforms\\dex\\debug\\folders\\1000\\10000\\instant-run-bootstrap_1920dc04b748136f1abd18eb1d57c9c45f30d0bb
+renamed.1=classes.dex
+renamed.0=classes2.dex
+file.1=C\:\\projekt-sem7\\app\\build\\intermediates\\transforms\\dex\\debug\\folders\\1000\\10000\\instant-run_85a88ee8d62473b31162efa691721793e12ae2d3\\classes.dex
+base.1=C\:\\projekt-sem7\\app\\build\\intermediates\\transforms\\dex\\debug\\folders\\1000\\10000\\instant-run_85a88ee8d62473b31162efa691721793e12ae2d3
+file.0=C\:\\projekt-sem7\\app\\build\\intermediates\\transforms\\dex\\debug\\folders\\1000\\10000\\instant-run-bootstrap_1920dc04b748136f1abd18eb1d57c9c45f30d0bb\\classes.dex

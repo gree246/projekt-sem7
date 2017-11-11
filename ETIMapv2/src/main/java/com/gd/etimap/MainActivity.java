@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.gd.etimap.helpers.AnimationOfBulletHelper;
@@ -13,6 +14,7 @@ import com.gd.etimap.helpers.CreateObjectsHelper;
 import com.gd.etimap.helpers.DrawingHelper;
 import com.gd.etimap.helpers.ImageTransformationHelper;
 import com.gd.etimap.helpers.ShootingHelper;
+import com.gd.etimap.helpers.SiHelper;
 import com.gd.etimap.objects.ListOfAllObjects;
 import com.gd.etimap.objects.OurObject;
 import com.qozix.tileview.TileView;
@@ -31,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R2.id.buttonGun)
     Button gunButton;
 
-    double counter = -1;
+    public static volatile double counter = -1;
 
     private ListOfAllObjects listOfAllObjects = new ListOfAllObjects();
     private TileView tileView = null;
@@ -40,7 +42,8 @@ public class MainActivity extends AppCompatActivity {
     private CreateObjectsHelper createObjectsHelper = new CreateObjectsHelper();
     private ImageTransformationHelper imageTransformationHelper = new ImageTransformationHelper();
     private ShootingHelper shootingHelper;
-    AnimationOfBulletHelper animationOfBulletHelper = new AnimationOfBulletHelper();
+    private AnimationOfBulletHelper animationOfBulletHelper = new AnimationOfBulletHelper();
+    private SiHelper siHelper = new SiHelper();
 
     private static int updateGUIInterval  = 50;
     private updateGUIThread updateGUIThread=new updateGUIThread();
@@ -53,9 +56,12 @@ public class MainActivity extends AppCompatActivity {
         createTileView();
 
         shootingHelper = new ShootingHelper(R.mipmap.enemy1, R.mipmap.enemy2, R.mipmap.enemy3, R.mipmap.enemy4, this);
-        createObjectsHelper.createPlayerAndArrowObjects(listOfAllObjects, imageTransformationHelper.createImageView(R.mipmap.ic_launcher, this, false), imageTransformationHelper.createImageView(R.mipmap.arrow, this, true));
-        createObjectsHelper.createBullet(listOfAllObjects, imageTransformationHelper.createImageView(R.mipmap.ic_launcher_round, this, false));
-        drawingHelper.drawPlayerAndArrowObjects(listOfAllObjects, tileView);
+        createObjectsHelper.createPlayer(listOfAllObjects, imageTransformationHelper.createImageView(R.mipmap.player2, this, false));
+        ImageView bullet = imageTransformationHelper.createImageView(R.mipmap.bullet , this, false);
+        bullet.setScaleX((float)0.3);
+        bullet.setScaleY((float)0.3);
+        createObjectsHelper.createBullet(listOfAllObjects, bullet);
+        drawingHelper.drawPlayer(listOfAllObjects, tileView);
 
         doListenersAndTileLayout();
         updateGUIHandler.postDelayed(updateGUIThread, updateGUIInterval);
@@ -108,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void doAnimation(){
-        if(isAnimationOfBullet){
+        if(isAnimationOfBullet && AnimationOfBulletHelper.listOfShootedPoints.size() > 1){
             updateGUIInterval = 10;
             counter++;
             animationOfBulletHelper.doAnimationOfBullet(listOfAllObjects, counter, tileView);
@@ -119,8 +125,11 @@ public class MainActivity extends AppCompatActivity {
                 updateGUIInterval = 50;
             }
         }
+        /*if(Math.random() < 0.5)
+            siHelper.doEnemySi(listOfAllObjects, tileView);*/
 
-        if(Math.random() < 0.01){
+
+        if(Math.random() < 0.02){
             drawingHelper.drawEnemy(listOfAllObjects, imageTransformationHelper.createImageView(R.mipmap.enemy0, this, false), tileView);
         }
     }
@@ -128,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
     class updateGUIThread implements Runnable {
         @Override
         public void run() {
-            OurObject player = listOfAllObjects.findAllEnemiesOrPlayerOrArrowOrBullet("Player").get(0);
+            OurObject player = listOfAllObjects.findAllEnemiesOrPlayerOrBullet("Player").get(0);
             tileView.slideToAndCenterWithScale(player.getPoint().getX(),player.getPoint().getY(),1f);
             tileView.scrollToAndCenter(player.getPoint().getX(),player.getPoint().getY());
             doAnimation();

@@ -19,17 +19,26 @@ public class AnimationOfBulletHelper {
     private DrawingHelper drawingHelper = new DrawingHelper();
 
     public void doAnimationOfBullet(ListOfAllObjects listOfAllObjects, double counter, TileView tileView){
-        Player palyer = (Player) listOfAllObjects.findAllEnemiesOrPlayerOrArrowOrBullet("Player").get(0);
-        Bullet bullet = (Bullet) listOfAllObjects.findAllEnemiesOrPlayerOrArrowOrBullet("Bullet").get(0);
+        Player palyer = (Player) listOfAllObjects.findAllEnemiesOrPlayerOrBullet("Player").get(0);
+        Bullet bullet = (Bullet) listOfAllObjects.findAllEnemiesOrPlayerOrBullet("Bullet").get(0);
         bullet.setFloor(palyer.getFloor());
-        bullet.setPoint(listOfShootedPoints.get((int) counter));
 
         if(counter == 0){
-            drawingHelper.draw(bullet, tileView);
+            try{
+                bullet.setPoint(listOfShootedPoints.get((int) counter));
+                drawingHelper.draw(bullet, tileView);
+            }catch (Exception e) {
+                e.printStackTrace();
+            }
         }else if(counter == (listOfShootedPoints.size()-1)){
             tileView.removeMarker(bullet.getMarker());
         }else {
-            drawingHelper.changePositionToPoint(bullet, tileView);
+            try{
+                bullet.setPoint(listOfShootedPoints.get((int) counter));
+                drawingHelper.changePositionToPoint(bullet, tileView);
+            }catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 }

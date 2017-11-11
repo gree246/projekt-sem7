@@ -1,0 +1,105 @@
+-- Merging decision tree log ---
+manifest
+ADDED from C:\projekt-sem7\WiFiLocalization\src\main\AndroidManifest.xml:2:1-25:12
+	package
+		ADDED from C:\projekt-sem7\WiFiLocalization\src\main\AndroidManifest.xml:3:5-46
+		INJECTED from C:\projekt-sem7\WiFiLocalization\src\main\AndroidManifest.xml
+		INJECTED from C:\projekt-sem7\WiFiLocalization\src\main\AndroidManifest.xml
+	android:versionName
+		INJECTED from C:\projekt-sem7\WiFiLocalization\src\main\AndroidManifest.xml
+		INJECTED from C:\projekt-sem7\WiFiLocalization\src\main\AndroidManifest.xml
+	xmlns:android
+		ADDED from C:\projekt-sem7\WiFiLocalization\src\main\AndroidManifest.xml:2:11-69
+	android:versionCode
+		INJECTED from C:\projekt-sem7\WiFiLocalization\src\main\AndroidManifest.xml
+		INJECTED from C:\projekt-sem7\WiFiLocalization\src\main\AndroidManifest.xml
+uses-permission#android.permission.CHANGE_WIFI_STATE
+ADDED from C:\projekt-sem7\WiFiLocalization\src\main\AndroidManifest.xml:5:5-75
+	android:name
+		ADDED from C:\projekt-sem7\WiFiLocalization\src\main\AndroidManifest.xml:5:22-73
+uses-permission#android.permission.ACCESS_WIFI_STATE
+ADDED from C:\projekt-sem7\WiFiLocalization\src\main\AndroidManifest.xml:6:5-75
+	android:name
+		ADDED from C:\projekt-sem7\WiFiLocalization\src\main\AndroidManifest.xml:6:22-73
+uses-permission#android.permission.ACCESS_FINE_LOCATION
+ADDED from C:\projekt-sem7\WiFiLocalization\src\main\AndroidManifest.xml:7:5-78
+	android:name
+		ADDED from C:\projekt-sem7\WiFiLocalization\src\main\AndroidManifest.xml:7:22-76
+uses-permission#android.permission.INTERNET
+ADDED from C:\projekt-sem7\WiFiLocalization\src\main\AndroidManifest.xml:8:5-66
+	android:name
+		ADDED from C:\projekt-sem7\WiFiLocalization\src\main\AndroidManifest.xml:8:22-64
+application
+ADDED from C:\projekt-sem7\WiFiLocalization\src\main\AndroidManifest.xml:9:5-23:19
+MERGED from [com.android.support.constraint:constraint-layout:1.0.2] C:\Users\Natalia Sobolewska\.android\build-cache\b3a8520a1b97a42342cb53a01b80c9540f566f63\output\AndroidManifest.xml:9:5-20
+MERGED from [com.qozix:tileview:2.2.7] C:\Users\Natalia Sobolewska\.android\build-cache\4bd7307780a669f1a0941a6acf9b2f4170fbaa1e\output\AndroidManifest.xml:11:5-20
+MERGED from [com.android.support:appcompat-v7:26.0.0-alpha1] C:\Users\Natalia Sobolewska\.android\build-cache\99edfc025894e610798e424a4947ad781f36f737\output\AndroidManifest.xml:29:5-20
+MERGED from [com.android.support:support-v4:26.0.0-alpha1] C:\Users\Natalia Sobolewska\.android\build-cache\aac413f32c2570de9b4a40a7a2a8f5417c1601d6\output\AndroidManifest.xml:29:5-20
+MERGED from [com.android.support:support-media-compat:26.0.0-alpha1] C:\Users\Natalia Sobolewska\.android\build-cache\993fff62ddf6ad4874919a48d4f16f1fb1dcabe9\output\AndroidManifest.xml:29:5-20
+MERGED from [com.android.support:support-fragment:26.0.0-alpha1] C:\Users\Natalia Sobolewska\.android\build-cache\45be231abd17a4a822086c78c42ec1fb115bcf24\output\AndroidManifest.xml:29:5-20
+MERGED from [com.android.support:support-core-ui:26.0.0-alpha1] C:\Users\Natalia Sobolewska\.android\build-cache\0ce2c071a4c26219ba355ca97f2c73f121bccda2\output\AndroidManifest.xml:29:5-20
+MERGED from [com.android.support:support-core-utils:26.0.0-alpha1] C:\Users\Natalia Sobolewska\.android\build-cache\acb9569a0b16626470c58736225a7d1544475e23\output\AndroidManifest.xml:29:5-20
+MERGED from [com.android.support:animated-vector-drawable:26.0.0-alpha1] C:\Users\Natalia Sobolewska\.android\build-cache\4221d62455c2d0930a86ac4fd7b89cca3ff64e3d\output\AndroidManifest.xml:26:5-20
+MERGED from [com.android.support:support-vector-drawable:26.0.0-alpha1] C:\Users\Natalia Sobolewska\.android\build-cache\3555f7a9e599591a21cca39b0c7eabd24df751eb\output\AndroidManifest.xml:26:5-20
+MERGED from [com.android.support:support-compat:26.0.0-alpha1] C:\Users\Natalia Sobolewska\.android\build-cache\9eb10e40cfb70c233134109ac32513a8cf3e267b\output\AndroidManifest.xml:29:5-20
+	android:label
+		ADDED from C:\projekt-sem7\WiFiLocalization\src\main\AndroidManifest.xml:12:9-41
+	android:supportsRtl
+		ADDED from C:\projekt-sem7\WiFiLocalization\src\main\AndroidManifest.xml:14:9-35
+	android:roundIcon
+		ADDED from C:\projekt-sem7\WiFiLocalization\src\main\AndroidManifest.xml:13:9-54
+	android:allowBackup
+		ADDED from C:\projekt-sem7\WiFiLocalization\src\main\AndroidManifest.xml:10:9-35
+	android:icon
+		ADDED from C:\projekt-sem7\WiFiLocalization\src\main\AndroidManifest.xml:11:9-43
+	android:theme
+		ADDED from C:\projekt-sem7\WiFiLocalization\src\main\AndroidManifest.xml:15:9-40
+activity#com.example.kamol.myapplication.MainActivity
+ADDED from C:\projekt-sem7\WiFiLocalization\src\main\AndroidManifest.xml:16:9-22:20
+	android:name
+		ADDED from C:\projekt-sem7\WiFiLocalization\src\main\AndroidManifest.xml:16:19-47
+intent-filter#android.intent.action.MAIN+android.intent.category.LAUNCHER
+ADDED from C:\projekt-sem7\WiFiLocalization\src\main\AndroidManifest.xml:17:13-21:29
+action#android.intent.action.MAIN
+ADDED from C:\projekt-sem7\WiFiLocalization\src\main\AndroidManifest.xml:18:17-69
+	android:name
+		ADDED from C:\projekt-sem7\WiFiLocalization\src\main\AndroidManifest.xml:18:25-66
+category#android.intent.category.LAUNCHER
+ADDED from C:\projekt-sem7\WiFiLocalization\src\main\AndroidManifest.xml:20:17-77
+	android:name
+		ADDED from C:\projekt-sem7\WiFiLocalization\src\main\AndroidManifest.xml:20:27-74
+uses-sdk
+INJECTED from C:\projekt-sem7\WiFiLocalization\src\main\AndroidManifest.xml reason: use-sdk injection requested
+MERGED from [com.android.support.constraint:constraint-layout:1.0.2] C:\Users\Natalia Sobolewska\.android\build-cache\b3a8520a1b97a42342cb53a01b80c9540f566f63\output\AndroidManifest.xml:5:5-7:41
+MERGED from [com.qozix:tileview:2.2.7] C:\Users\Natalia Sobolewska\.android\build-cache\4bd7307780a669f1a0941a6acf9b2f4170fbaa1e\output\AndroidManifest.xml:7:5-9:41
+MERGED from [com.android.support:appcompat-v7:26.0.0-alpha1] C:\Users\Natalia Sobolewska\.android\build-cache\99edfc025894e610798e424a4947ad781f36f737\output\AndroidManifest.xml:21:5-23:78
+MERGED from [com.android.support:support-v4:26.0.0-alpha1] C:\Users\Natalia Sobolewska\.android\build-cache\aac413f32c2570de9b4a40a7a2a8f5417c1601d6\output\AndroidManifest.xml:21:5-23:54
+MERGED from [com.android.support:support-media-compat:26.0.0-alpha1] C:\Users\Natalia Sobolewska\.android\build-cache\993fff62ddf6ad4874919a48d4f16f1fb1dcabe9\output\AndroidManifest.xml:21:5-23:63
+MERGED from [com.android.support:support-fragment:26.0.0-alpha1] C:\Users\Natalia Sobolewska\.android\build-cache\45be231abd17a4a822086c78c42ec1fb115bcf24\output\AndroidManifest.xml:21:5-23:60
+MERGED from [com.android.support:support-core-ui:26.0.0-alpha1] C:\Users\Natalia Sobolewska\.android\build-cache\0ce2c071a4c26219ba355ca97f2c73f121bccda2\output\AndroidManifest.xml:21:5-23:58
+MERGED from [com.android.support:support-core-utils:26.0.0-alpha1] C:\Users\Natalia Sobolewska\.android\build-cache\acb9569a0b16626470c58736225a7d1544475e23\output\AndroidManifest.xml:21:5-23:61
+MERGED from [com.android.support:animated-vector-drawable:26.0.0-alpha1] C:\Users\Natalia Sobolewska\.android\build-cache\4221d62455c2d0930a86ac4fd7b89cca3ff64e3d\output\AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-vector-drawable:26.0.0-alpha1] C:\Users\Natalia Sobolewska\.android\build-cache\3555f7a9e599591a21cca39b0c7eabd24df751eb\output\AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-compat:26.0.0-alpha1] C:\Users\Natalia Sobolewska\.android\build-cache\9eb10e40cfb70c233134109ac32513a8cf3e267b\output\AndroidManifest.xml:21:5-23:58
+	tools:overrideLibrary
+		ADDED from [com.android.support:appcompat-v7:26.0.0-alpha1] C:\Users\Natalia Sobolewska\.android\build-cache\99edfc025894e610798e424a4947ad781f36f737\output\AndroidManifest.xml:23:9-75
+	android:targetSdkVersion
+		INJECTED from C:\projekt-sem7\WiFiLocalization\src\main\AndroidManifest.xml
+		INJECTED from C:\projekt-sem7\WiFiLocalization\src\main\AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from C:\projekt-sem7\WiFiLocalization\src\main\AndroidManifest.xml
+		INJECTED from C:\projekt-sem7\WiFiLocalization\src\main\AndroidManifest.xml
+meta-data#android.support.VERSION
+ADDED from [com.android.support:appcompat-v7:26.0.0-alpha1] C:\Users\Natalia Sobolewska\.android\build-cache\99edfc025894e610798e424a4947ad781f36f737\output\AndroidManifest.xml:25:5-27:41
+MERGED from [com.android.support:support-v4:26.0.0-alpha1] C:\Users\Natalia Sobolewska\.android\build-cache\aac413f32c2570de9b4a40a7a2a8f5417c1601d6\output\AndroidManifest.xml:25:5-27:41
+MERGED from [com.android.support:support-media-compat:26.0.0-alpha1] C:\Users\Natalia Sobolewska\.android\build-cache\993fff62ddf6ad4874919a48d4f16f1fb1dcabe9\output\AndroidManifest.xml:25:5-27:41
+MERGED from [com.android.support:support-fragment:26.0.0-alpha1] C:\Users\Natalia Sobolewska\.android\build-cache\45be231abd17a4a822086c78c42ec1fb115bcf24\output\AndroidManifest.xml:25:5-27:41
+MERGED from [com.android.support:support-core-ui:26.0.0-alpha1] C:\Users\Natalia Sobolewska\.android\build-cache\0ce2c071a4c26219ba355ca97f2c73f121bccda2\output\AndroidManifest.xml:25:5-27:41
+MERGED from [com.android.support:support-core-utils:26.0.0-alpha1] C:\Users\Natalia Sobolewska\.android\build-cache\acb9569a0b16626470c58736225a7d1544475e23\output\AndroidManifest.xml:25:5-27:41
+MERGED from [com.android.support:animated-vector-drawable:26.0.0-alpha1] C:\Users\Natalia Sobolewska\.android\build-cache\4221d62455c2d0930a86ac4fd7b89cca3ff64e3d\output\AndroidManifest.xml:22:5-24:41
+MERGED from [com.android.support:support-vector-drawable:26.0.0-alpha1] C:\Users\Natalia Sobolewska\.android\build-cache\3555f7a9e599591a21cca39b0c7eabd24df751eb\output\AndroidManifest.xml:22:5-24:41
+MERGED from [com.android.support:support-compat:26.0.0-alpha1] C:\Users\Natalia Sobolewska\.android\build-cache\9eb10e40cfb70c233134109ac32513a8cf3e267b\output\AndroidManifest.xml:25:5-27:41
+	android:value
+		ADDED from [com.android.support:appcompat-v7:26.0.0-alpha1] C:\Users\Natalia Sobolewska\.android\build-cache\99edfc025894e610798e424a4947ad781f36f737\output\AndroidManifest.xml:27:9-38
+	android:name
+		ADDED from [com.android.support:appcompat-v7:26.0.0-alpha1] C:\Users\Natalia Sobolewska\.android\build-cache\99edfc025894e610798e424a4947ad781f36f737\output\AndroidManifest.xml:26:9-47
