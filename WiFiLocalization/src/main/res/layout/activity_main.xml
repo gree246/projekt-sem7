@@ -32,14 +32,16 @@
       android:orientation="horizontal">
    <EditText
        android:id="@+id/numerPomiaruId"
-       android:layout_width="match_parent"
+       android:layout_width="300dp"
        android:layout_height="wrap_content"
        android:hint="numer pomiaru"/>
+<TextView
+    android:id="@+id/statusId"
+    android:layout_width="50dp"
+    android:layout_height="wrap_content"
+    android:text="" />
 
-<Spinner
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
-</Spinner>
+
   </LinearLayout>
 
 

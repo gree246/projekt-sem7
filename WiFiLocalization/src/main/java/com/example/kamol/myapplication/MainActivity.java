@@ -25,6 +25,8 @@ import android.widget.TextView;
 
 import com.qozix.tileview.TileView;
 
+import org.w3c.dom.Text;
+
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -57,12 +59,14 @@ public class MainActivity extends AppCompatActivity {
     private String nazwaPomiaru, wyslijIP;
     private EditText nazwaPomiaruET;
     private EditText wyslijIPET;
+    private TextView status;
     private Button sendButton;
     private String resault="";
     private TileView tileView = null;
     private int centerX=0;
     private int centerY=0;
     private int floor=0;
+    private boolean send = false;
     MyBroadcastReciver reciver = new MyBroadcastReciver();;
 
     @Override
@@ -76,6 +80,8 @@ public class MainActivity extends AppCompatActivity {
         nazwaPomiaru= settings.getString("nawaPomiaru","a001");
         nazwaPomiaruET.setText(nazwaPomiaru);
 
+        status= (TextView)findViewById(R.id.statusId);
+
         wyslijIPET = (EditText) findViewById(R.id.IPwyslijId) ;
         wyslijIP= settings.getString("wyslijIp","95.160.153.43");
         wyslijIPET.setText(wyslijIP);
@@ -83,8 +89,10 @@ public class MainActivity extends AppCompatActivity {
         tileView = new TileView(this);
         tileView.setSize( 8192, 8192 );  // the original size of the untiled image
         tileView.addDetailLevel( 1f, "tiles/tile_%d_%d.png", 256, 256);
-        tileView.slideToAndCenterWithScale(4000,4000,0.8f);
+//        tileView.slideToAndCenterWithScale(4000,4000,1f);
+        tileView.setScale(1.0f);
         tileView.scrollToAndCenter(4000,4000);
+
         final RelativeLayout tileLayout = (RelativeLayout) findViewById(R.id.MapLayoutId) ;
         tileLayout.addView(tileView);
         ImageView pozycja = new ImageView(this);
@@ -107,8 +115,9 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 wifiManager.startScan();
                 wyslijIP=wyslijIPET.getText().toString();
-                centerX=tileView.getScrollX();
-                centerY=tileView.getScrollY();
+                centerX=tileView.getCoordinateTranslater().translateAndScaleX(tileView.getScrollX(),tileView.getScaleX());
+                centerY=tileView.getCoordinateTranslater().translateAndScaleY(tileView.getScrollY(),tileView.getScaleY());
+//                centerY=tileView.getScrollY();
                 nazwaPomiaru=nazwaPomiaruET.getText().toString();
                 nazwaPomiaruET.setText(nazwaPomiaru.substring(0,1)+String.format("%03d", Integer.parseInt(nazwaPomiaru.substring(1))+1));
                 SharedPreferences settings = getSharedPreferences("nanana", 0);
@@ -116,6 +125,8 @@ public class MainActivity extends AppCompatActivity {
                 editor.putString("nazwaPomiaru", nazwaPomiaruET.getText().toString());
                 editor.putString("wyslijIp", wyslijIP);
                 editor.commit();
+                send=true;
+                status.setText("wait");
 //                nazwaPomiaruET.setText(Integer.toString(tileView.getScrollX()));
 
             }
@@ -171,8 +182,10 @@ public class MainActivity extends AppCompatActivity {
             }
 //            wifiSignal.setText(buffer);
             resault = buffer.toString();
-            sendDataHttp(resault);
-
+            if(send) {
+                sendDataHttp(resault);
+                send = false;
+            }
 
         }
 
@@ -312,6 +325,7 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     Log.d("sending", POST(client, url, body));
 
+
                 } catch (IOException e) {
 //                    e.printStackTrace();
                     Log.d("sending", "error");
@@ -320,7 +334,16 @@ public class MainActivity extends AppCompatActivity {
                 }
                 return null;
             }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                status.setText("ok");
+            }
+
+
         }
+
 
         private void sendDataHttp(String buffero) {
             mAsyncTask asyncTask = new mAsyncTask();
