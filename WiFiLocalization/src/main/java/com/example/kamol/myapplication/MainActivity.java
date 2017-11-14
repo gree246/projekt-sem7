@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiInfo;
 import android.content.Context;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.StringBuilderPrinter;
 import android.view.MotionEvent;
@@ -53,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 //    TextView wifiSignal;
+    public boolean error = false;
     WifiManager wifiManager;
     private Timer timer;
     private TimerTask timerTask;
@@ -92,6 +94,7 @@ public class MainActivity extends AppCompatActivity {
 //        tileView.slideToAndCenterWithScale(4000,4000,1f);
         tileView.setScale(1.0f);
         tileView.scrollToAndCenter(4000,4000);
+        tileView.defineBounds(0,8192,0,8192);
 
         final RelativeLayout tileLayout = (RelativeLayout) findViewById(R.id.MapLayoutId) ;
         tileLayout.addView(tileView);
@@ -107,6 +110,7 @@ public class MainActivity extends AppCompatActivity {
         pozycja.setLayoutParams(params);
 
 
+        tileView.scrollTo(4500,4500);
 
 
         sendButton = (Button) findViewById(R.id.sendButtonId);
@@ -115,8 +119,11 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 wifiManager.startScan();
                 wyslijIP=wyslijIPET.getText().toString();
-                centerX=tileView.getCoordinateTranslater().translateAndScaleX(tileView.getScrollX(),tileView.getScaleX());
-                centerY=tileView.getCoordinateTranslater().translateAndScaleY(tileView.getScrollY(),tileView.getScaleY());
+              //  centerX=tileView.getCoordinateTranslater().translateAndScaleX(tileView.getScrollX(),tileView.getScaleX())+256;
+               // centerY=tileView.getCoordinateTranslater().translateAndScaleY(tileView.getScrollY(),tileView.getScaleY())+256;
+                centerX = Math.round(tileView.getScrollX()/tileView.getScale()) + Math.round(tileView.getWidth()/2/tileView.getScale());
+                centerY = Math.round(tileView.getScrollY()/tileView.getScale()) + Math.round(tileView.getHeight()/2/tileView.getScale());
+
 //                centerY=tileView.getScrollY();
                 nazwaPomiaru=nazwaPomiaruET.getText().toString();
                 nazwaPomiaruET.setText(nazwaPomiaru.substring(0,1)+String.format("%03d", Integer.parseInt(nazwaPomiaru.substring(1))+1));
@@ -135,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+        wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         registerReceiver(reciver, new IntentFilter(wifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
 
         //sendData(reciver.resault);
@@ -305,7 +312,7 @@ public class MainActivity extends AppCompatActivity {
                 String currentDateandTime = sdf.format(time);
                 Integer currentTimeMiliseconds = Integer.parseInt(currentDateandTime.split("\\.")[1]);
 
-
+                error = false;
                 String message = nazwaPomiaru + ";" + Integer.toString(floor) + ";" + Integer.toString(centerX) + ";" + Integer.toString(centerY) + "|" + buf+"\n";
 
 
@@ -329,8 +336,10 @@ public class MainActivity extends AppCompatActivity {
                 } catch (IOException e) {
 //                    e.printStackTrace();
                     Log.d("sending", "error");
+                    error = true;
                 } catch (Exception e) {
                     Log.e("OTHER EXCEPTIONS", e.toString());
+                    error = true;
                 }
                 return null;
             }
@@ -338,7 +347,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             protected void onPostExecute(Void aVoid) {
                 super.onPostExecute(aVoid);
-                status.setText("ok");
+                if (error)
+                    status.setText("ERROR");
+                else
+                    status.setText("ok");
             }
 
 
