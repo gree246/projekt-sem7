@@ -1,7 +1,0 @@
-#Wed Nov 08 15:18:06 CET 2017
-base.0=C\:\\projekt-sem7\\ETIMapv2\\build\\intermediates\\transforms\\dex\\debug\\folders\\1000\\10000\\instant-run-bootstrap_c6f19fed306918e47ffd8615926cd65a1f485014
-renamed.1=classes2.dex
-renamed.0=classes.dex
-file.1=C\:\\projekt-sem7\\ETIMapv2\\build\\intermediates\\transforms\\dex\\debug\\folders\\1000\\10000\\instant-run_3e150bfc452d3fc41826e6159d9fdaec1e1d891d\\classes.dex
-base.1=C\:\\projekt-sem7\\ETIMapv2\\build\\intermediates\\transforms\\dex\\debug\\folders\\1000\\10000\\instant-run_3e150bfc452d3fc41826e6159d9fdaec1e1d891d
-file.0=C\:\\projekt-sem7\\ETIMapv2\\build\\intermediates\\transforms\\dex\\debug\\folders\\1000\\10000\\instant-run-bootstrap_c6f19fed306918e47ffd8615926cd65a1f485014\\classes.dex
