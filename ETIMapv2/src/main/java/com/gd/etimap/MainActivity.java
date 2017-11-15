@@ -18,6 +18,7 @@ import com.gd.etimap.helpers.SiHelper;
 import com.gd.etimap.objects.ListOfAllObjects;
 import com.gd.etimap.objects.OurObject;
 import com.qozix.tileview.TileView;
+import com.qozix.tileview.detail.DetailLevel;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -39,10 +40,11 @@ public class MainActivity extends AppCompatActivity {
 
     public static volatile double counter = -1;
 
-    private int floor = 0;
+    public static int floor = 0;
 
     private ListOfAllObjects listOfAllObjects = new ListOfAllObjects();
     private TileView tileView = null;
+    private DetailLevel  detailLevel = null;
 
     private DrawingHelper drawingHelper = new DrawingHelper();
     private CreateObjectsHelper createObjectsHelper = new CreateObjectsHelper();
@@ -89,7 +91,8 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         tileView.setSize( 8192, 8192 );  // the original size of the untiled image
-        tileView.addDetailLevel( 1f, "floor"+floor+"/tile_"+floor+"_%d_%d.png", 256, 256);
+        detailLevel = new DetailLevel(tileView.getDetailLevelManager(),1f, "floor"+floor+"/tile_"+floor+"_%d_%d.png", 256, 256);
+        tileView.onDetailLevelChanged(detailLevel);
 
     }
 
@@ -114,8 +117,8 @@ public class MainActivity extends AppCompatActivity {
         Button bDown = (Button) findViewById(R.id.buttonDown_id) ;
         bDown.setOnClickListener(view -> drawingHelper.changePositionOfPlayer(listOfAllObjects, "y", "+", tileView));
 
-//        buttonFDown.setOnClickListener(view -> DrawingHelper.changeFloorDown(tileView, &floor));
-//        buttonFUp.setOnClickListener(view -> DrawingHelper.changeFloorUp(tileView, &floor));
+        buttonFDown.setOnClickListener(view -> DrawingHelper.changeFloorDown(tileView));
+        buttonFUp.setOnClickListener(view -> DrawingHelper.changeFloorUp(tileView));
 
         rotateLeftButton.setOnClickListener(view -> imageTransformationHelper.rotate(listOfAllObjects, false, tileView));
         rotateRightButton.setOnClickListener(view -> imageTransformationHelper.rotate(listOfAllObjects, true, tileView));

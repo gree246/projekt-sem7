@@ -3,12 +3,14 @@ package com.gd.etimap.helpers;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.gd.etimap.MainActivity;
 import com.gd.etimap.atributtes.Point;
 import com.gd.etimap.objects.Enemy;
 import com.gd.etimap.objects.ListOfAllObjects;
 import com.gd.etimap.objects.OurObject;
 import com.gd.etimap.objects.Player;
 import com.qozix.tileview.TileView;
+import com.qozix.tileview.detail.DetailLevel;
 
 import solid.functions.Action1;
 import solid.stream.Stream;
@@ -64,26 +66,26 @@ public class DrawingHelper {
         }
     }
 
-    public void changeFloorUp(TileView tileView, int floor)
+    public static void changeFloorUp(TileView tileView)
     {
-        floor += 1;
-        if(floor > 9)
+        MainActivity.floor += 1;
+        if(MainActivity.floor > 9)
         {
-            floor = 9;
+            MainActivity.floor = 9;
         }
-        tileView.setSize( 8192, 8192 );  // the original size of the untiled image
-        tileView.addDetailLevel( 1f, "floor"+floor+"/tile_"+floor+"_%d_%d.png", 256, 256);
+        DetailLevel detLev = new DetailLevel(tileView.getDetailLevelManager(),1f, "floor"+MainActivity.floor+"/tile_"+MainActivity.floor+"_%d_%d.png", 256, 256);
+        tileView.onDetailLevelChanged(detLev);
     }
 
-    public void changeFloorDown(TileView tileView, int floor)
+    public static void changeFloorDown(TileView tileView)
     {
-        floor -= 1;
-        if(floor < (-1))
+        MainActivity.floor -= 1;
+        if(MainActivity.floor < (-1))
         {
-            floor = -1;
+            MainActivity.floor = -1;
         }
-        tileView.setSize( 8192, 8192 );  // the original size of the untiled image
-        tileView.addDetailLevel( 1f, "floor"+floor+"/tile_"+floor+"_%d_%d.png", 256, 256);
+        DetailLevel detLev = new DetailLevel(tileView.getDetailLevelManager(),1f, "floor"+MainActivity.floor+"/tile_"+MainActivity.floor+"_%d_%d.png", 256, 256);
+        tileView.onDetailLevelChanged(detLev);
     }
 
     private Point randPosition(){
