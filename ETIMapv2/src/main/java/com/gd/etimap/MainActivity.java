@@ -32,8 +32,14 @@ public class MainActivity extends AppCompatActivity {
     Button rotateRightButton;
     @BindView(R2.id.buttonGun)
     Button gunButton;
+    @BindView(R.id.buttonFloorDown)
+    Button buttonFDown;
+    @BindView(R.id.buttonFloorUp)
+    Button buttonFUp;
 
     public static volatile double counter = -1;
+
+    private int floor = 0;
 
     private ListOfAllObjects listOfAllObjects = new ListOfAllObjects();
     private TileView tileView = null;
@@ -83,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         tileView.setSize( 8192, 8192 );  // the original size of the untiled image
-        tileView.addDetailLevel( 1f, "tiles/tile_%d_%d.png", 256, 256);
+        tileView.addDetailLevel( 1f, "floor"+floor+"/tile_"+floor+"_%d_%d.png", 256, 256);
 
     }
 
@@ -107,6 +113,9 @@ public class MainActivity extends AppCompatActivity {
 
         Button bDown = (Button) findViewById(R.id.buttonDown_id) ;
         bDown.setOnClickListener(view -> drawingHelper.changePositionOfPlayer(listOfAllObjects, "y", "+", tileView));
+
+//        buttonFDown.setOnClickListener(view -> DrawingHelper.changeFloorDown(tileView, &floor));
+//        buttonFUp.setOnClickListener(view -> DrawingHelper.changeFloorUp(tileView, &floor));
 
         rotateLeftButton.setOnClickListener(view -> imageTransformationHelper.rotate(listOfAllObjects, false, tileView));
         rotateRightButton.setOnClickListener(view -> imageTransformationHelper.rotate(listOfAllObjects, true, tileView));

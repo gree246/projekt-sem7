@@ -68,6 +68,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/bDown" />
+
+                <Button
+                    android:id="@+id/buttonFloorDown"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Down" />
             </LinearLayout>
 
 
@@ -90,6 +96,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/BRight" />
+
+                <Button
+                    android:id="@+id/buttonFloorUp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="UP" />
 
             </LinearLayout>
 

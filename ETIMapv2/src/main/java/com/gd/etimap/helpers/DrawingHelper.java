@@ -64,6 +64,28 @@ public class DrawingHelper {
         }
     }
 
+    public void changeFloorUp(TileView tileView, int floor)
+    {
+        floor += 1;
+        if(floor > 9)
+        {
+            floor = 9;
+        }
+        tileView.setSize( 8192, 8192 );  // the original size of the untiled image
+        tileView.addDetailLevel( 1f, "floor"+floor+"/tile_"+floor+"_%d_%d.png", 256, 256);
+    }
+
+    public void changeFloorDown(TileView tileView, int floor)
+    {
+        floor -= 1;
+        if(floor < (-1))
+        {
+            floor = -1;
+        }
+        tileView.setSize( 8192, 8192 );  // the original size of the untiled image
+        tileView.addDetailLevel( 1f, "floor"+floor+"/tile_"+floor+"_%d_%d.png", 256, 256);
+    }
+
     private Point randPosition(){
         double rand = Math.random();
 
