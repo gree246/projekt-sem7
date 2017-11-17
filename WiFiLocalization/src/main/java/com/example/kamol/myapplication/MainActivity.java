@@ -56,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
 //    TextView wifiSignal;
     public boolean error = false;
     WifiManager wifiManager;
+    WifiManager.WifiLock wifiLock;
     private Timer timer;
     private TimerTask timerTask;
     private String nazwaPomiaru, wyslijIP;
@@ -117,7 +118,11 @@ public class MainActivity extends AppCompatActivity {
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                wifiManager.startScan();
+                send=true;
+                if(wifiManager.startScan()){
+                    status.setText("wait");
+                };
+
                 wyslijIP=wyslijIPET.getText().toString();
               //  centerX=tileView.getCoordinateTranslater().translateAndScaleX(tileView.getScrollX(),tileView.getScaleX())+256;
                // centerY=tileView.getCoordinateTranslater().translateAndScaleY(tileView.getScrollY(),tileView.getScaleY())+256;
@@ -127,13 +132,13 @@ public class MainActivity extends AppCompatActivity {
 //                centerY=tileView.getScrollY();
                 nazwaPomiaru=nazwaPomiaruET.getText().toString();
                 nazwaPomiaruET.setText(nazwaPomiaru.substring(0,1)+String.format("%03d", Integer.parseInt(nazwaPomiaru.substring(1))+1));
-                SharedPreferences settings = getSharedPreferences("nanana", 0);
-                SharedPreferences.Editor editor = settings.edit();
-                editor.putString("nazwaPomiaru", nazwaPomiaruET.getText().toString());
-                editor.putString("wyslijIp", wyslijIP);
-                editor.commit();
-                send=true;
-                status.setText("wait");
+//                SharedPreferences settings = getSharedPreferences("nanana", 0);
+//                SharedPreferences.Editor editor = settings.edit();
+//                editor.putString("nazwaPomiaru", nazwaPomiaruET.getText().toString());
+//                editor.putString("wyslijIp", wyslijIP);
+//                editor.commit();
+
+
 //                nazwaPomiaruET.setText(Integer.toString(tileView.getScrollX()));
 
             }
@@ -144,6 +149,10 @@ public class MainActivity extends AppCompatActivity {
 
         wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         registerReceiver(reciver, new IntentFilter(wifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
+        wifiManager.setWifiEnabled(true);
+        wifiLock = wifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL, "sdgs");
+        wifiLock.setReferenceCounted(true);
+        wifiLock.acquire();
 
         //sendData(reciver.resault);
 
@@ -177,21 +186,29 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            StringBuffer buffer = new StringBuffer();
-            List<ScanResult> list = wifiManager.getScanResults();
-            for (ScanResult scanResult : list) {
-                buffer.append(scanResult.BSSID);
-                buffer.append(" ");
-                buffer.append(scanResult.level);
-                buffer.append(" ");
-                buffer.append(scanResult.frequency);
-                buffer.append(";");
-            }
+            try {
+                StringBuffer buffer = new StringBuffer();
+                List<ScanResult> list = wifiManager.getScanResults();
+                for (ScanResult scanResult : list) {
+                    status.setText(Integer.toString(buffer.length()));
+                    buffer.append(scanResult.BSSID);
+                    buffer.append(" ");
+                    buffer.append(scanResult.level);
+                    buffer.append(" ");
+                    buffer.append(scanResult.frequency);
+                    buffer.append(";");
+                }
 //            wifiSignal.setText(buffer);
-            resault = buffer.toString();
-            if(send) {
-                sendDataHttp(resault);
-                send = false;
+                resault = buffer.toString();
+                status.setText("getWifi1");
+                if (send) {
+                    status.setText("getWifi2");
+                    sendData(resault);
+
+                    send = false;
+                }
+            }catch (Exception e){
+                status.setText(e.toString());
             }
 
         }
@@ -199,6 +216,8 @@ public class MainActivity extends AppCompatActivity {
         private void sendData(final String buffero) {
             wyslijIP = wyslijIPET.getText().toString();
             AsyncTask asyncTask = new AsyncTask() {
+
+                String responseLine="";
 
 
                 @Override
@@ -217,7 +236,7 @@ public class MainActivity extends AppCompatActivity {
 
                     try {
                         socket = new Socket();
-                        socket.connect(new InetSocketAddress(wyslijIP, 37777), 2000);
+                        socket.connect(new InetSocketAddress(wyslijIP, 8888), 2000);
                         os = new DataOutputStream(socket.getOutputStream());
                         is = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
@@ -233,31 +252,10 @@ public class MainActivity extends AppCompatActivity {
 
                     try {
                         os.writeChars(message);
-                        String responseLine = is.readLine();
+                        responseLine = is.readLine();
 
 //                    if(responseLine!=null) {
-//                        String[] values = responseLine.split(";");
-//                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss.SSS");
-//                        Date msgTime = new Date();
-//                        try {
-//                            msgTime = dateFormat.parse(values[0]);
-//                        } catch (ParseException e) {
-//                            //RPiStatus="Invalid date value";
-//                            e.printStackTrace();
-//                        }
-//                        if (msgTime.after(lastRPiUpdate)) {
-//                            lastRPiUpdate = msgTime;
-//                            try {
-//                                windAngle = Double.parseDouble(values[1]);
-//                                windSpeed = Double.parseDouble(values[2]);
-//                                RPiStatus = values[3];
-//                            }catch (Exception e){
-//                                RPiStatus="Invalid values";
-//                            }
 //
-//                        }else{
-//                            RPiStatus="Outdated values";
-//                        }
 //                    }
                         os.close();
                         is.close();
@@ -272,6 +270,14 @@ public class MainActivity extends AppCompatActivity {
 
                     return null;
                 }
+
+                @Override
+                protected void onPostExecute(Object o) {
+                    super.onPostExecute(o);
+                    status.setText(responseLine);
+                }
+
+
             };
 
             asyncTask.execute();
