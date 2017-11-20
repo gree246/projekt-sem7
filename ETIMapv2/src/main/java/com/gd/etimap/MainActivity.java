@@ -1,5 +1,8 @@
 package com.gd.etimap;
 
+import android.content.Context;
+import android.content.IntentFilter;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -17,6 +20,7 @@ import com.gd.etimap.helpers.ShootingHelper;
 import com.gd.etimap.helpers.SiHelper;
 import com.gd.etimap.objects.ListOfAllObjects;
 import com.gd.etimap.objects.OurObject;
+import com.gd.etimap.receivers.MyBroadcastReciver;
 import com.qozix.tileview.TileView;
 import com.qozix.tileview.detail.DetailLevel;
 
@@ -24,6 +28,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static com.gd.etimap.helpers.AnimationOfBulletHelper.isAnimationOfBullet;
+import static com.gd.etimap.receivers.MyBroadcastReciver.wifiManager;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -71,8 +76,15 @@ public class MainActivity extends AppCompatActivity {
         createObjectsHelper.createBullet(listOfAllObjects, bullet);
         drawingHelper.drawPlayer(listOfAllObjects, tileView);
 
+        doConnetion();
         doListenersAndTileLayout();
         updateGUIHandler.postDelayed(updateGUIThread, updateGUIInterval);
+    }
+
+    private void doConnetion(){
+        MyBroadcastReciver reciver = new MyBroadcastReciver();
+        wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        registerReceiver(reciver, new IntentFilter(wifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
     }
 
     private void createTileView(){
@@ -139,8 +151,6 @@ public class MainActivity extends AppCompatActivity {
         }
         /*if(Math.random() < 0.5)
             siHelper.doEnemySi(listOfAllObjects, tileView);*/
-
-
         if(Math.random() < 0.02){
             drawingHelper.drawEnemy(listOfAllObjects, imageTransformationHelper.createImageView(R.mipmap.enemy0, this, false), tileView);
         }
@@ -153,6 +163,7 @@ public class MainActivity extends AppCompatActivity {
             tileView.slideToAndCenterWithScale(player.getPoint().getX(),player.getPoint().getY(),1f);
             tileView.scrollToAndCenter(player.getPoint().getX(),player.getPoint().getY());
             doAnimation();
+            wifiManager.startScan();
             updateGUIHandler.postDelayed(this, updateGUIInterval);
         }
     }
