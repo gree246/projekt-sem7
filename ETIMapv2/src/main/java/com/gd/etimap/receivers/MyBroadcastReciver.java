@@ -24,7 +24,7 @@ public class MyBroadcastReciver extends BroadcastReceiver {
     private int x=0;
     private int y=0;
     private int floor=0;
-    String serverIP="192.168.1.128";
+    String serverIP="192.168.1.210";
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -82,9 +82,15 @@ public class MyBroadcastReciver extends BroadcastReceiver {
             @Override
             protected void onPostExecute(Object o) {
                 super.onPostExecute(o);
-                x=Integer.parseInt(responseLine.split(";")[0]);
-                y=Integer.parseInt(responseLine.split(";")[1]);
-                floor=Integer.parseInt(responseLine.split(";")[2]);
+                try {
+                    x = Integer.parseInt(responseLine.split(";")[0]);
+                    y = Integer.parseInt(responseLine.split(";")[1]);
+                    floor = Integer.parseInt(responseLine.split(";")[2]);
+                }catch (Exception e){
+                    x=0;
+                    y=0;
+                    floor=0;
+                }
             }
         };
         asyncTask.execute();
