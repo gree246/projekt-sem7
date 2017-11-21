@@ -7,6 +7,10 @@ import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 
+import com.gd.etimap.objects.ListOfAllObjects;
+import com.gd.etimap.objects.Player;
+import com.qozix.tileview.TileView;
+
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.InputStreamReader;
@@ -21,10 +25,17 @@ import java.util.List;
 public class MyBroadcastReciver extends BroadcastReceiver {
 
     public static WifiManager wifiManager;
-    private int x=0;
-    private int y=0;
+    private double x=4000;
+    private double y=4000;
     private int floor=0;
-    String serverIP="192.168.1.210";
+    String serverIP="192.168.43.106";
+    Player player;
+    TileView tileView;
+
+    public MyBroadcastReciver(ListOfAllObjects listOfAllObjects,TileView tileView){
+        this.tileView=(TileView)tileView;
+        player = (Player) listOfAllObjects.findAllEnemiesOrPlayerOrBullet("Player").get(0);
+    }
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -83,14 +94,21 @@ public class MyBroadcastReciver extends BroadcastReceiver {
             protected void onPostExecute(Object o) {
                 super.onPostExecute(o);
                 try {
-                    x = Integer.parseInt(responseLine.split(";")[0]);
-                    y = Integer.parseInt(responseLine.split(";")[1]);
+                    x = Double.parseDouble(responseLine.split(";")[0]);
+                    y = Double.parseDouble(responseLine.split(";")[1]);
                     floor = Integer.parseInt(responseLine.split(";")[2]);
                 }catch (Exception e){
-                    x=0;
-                    y=0;
-                    floor=0;
+//                    x=4000;
+//                    y=4000;
+//                    floor=0;
                 }
+                player.getPoint().setX(0.8*player.getPoint().getX()+0.2* x);
+                player.getPoint().setY(0.8*player.getPoint().getY()+0.2*y);
+
+               x = player.getPoint().getX();
+               y = player.getPoint().getY();
+
+                tileView.moveMarker(player.getMarker(), x, y);
             }
         };
         asyncTask.execute();

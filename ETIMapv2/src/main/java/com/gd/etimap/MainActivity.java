@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void doConnetion(){
-        MyBroadcastReciver reciver = new MyBroadcastReciver();
+        MyBroadcastReciver reciver = new MyBroadcastReciver(listOfAllObjects,tileView);
         wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         registerReceiver(reciver, new IntentFilter(wifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
     }
