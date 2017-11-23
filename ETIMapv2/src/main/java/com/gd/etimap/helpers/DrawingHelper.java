@@ -88,6 +88,18 @@ public class DrawingHelper {
         tileView.onDetailLevelChanged(detLev);
     }
 
+    public void changeFloor(TileView tileView, int floor)
+    {
+        MainActivity.floor = floor;
+        if(MainActivity.floor < (-1)) {
+            MainActivity.floor = -1;
+        }else if(MainActivity.floor > 9) {
+            MainActivity.floor = 9;
+        }
+        DetailLevel detLev = new DetailLevel(tileView.getDetailLevelManager(),1f, "floor"+MainActivity.floor+"/tile_"+MainActivity.floor+"_%d_%d.png", 256, 256);
+        tileView.onDetailLevelChanged(detLev);
+    }
+
     private Point randPosition(){
         double rand = Math.random();
 

@@ -7,6 +7,7 @@ import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 
+import com.gd.etimap.helpers.DrawingHelper;
 import com.gd.etimap.objects.ListOfAllObjects;
 import com.gd.etimap.objects.Player;
 import com.qozix.tileview.TileView;
@@ -32,6 +33,8 @@ public class MyBroadcastReciver extends BroadcastReceiver {
     String serverIP="192.168.137.1";
     Player player;
     TileView tileView;
+
+    DrawingHelper drawingHelper = new DrawingHelper();
 
     public MyBroadcastReciver(ListOfAllObjects listOfAllObjects,TileView tileView){
         this.tileView=(TileView)tileView;
@@ -105,7 +108,7 @@ public class MyBroadcastReciver extends BroadcastReceiver {
                 player.getPoint().setX(0*player.getPoint().getX()+1* x);
                 player.getPoint().setY(0*player.getPoint().getY()+1*y);
 
-
+                drawingHelper.changeFloor(tileView, floor);
 
                 tileView.moveMarker(player.getMarker(), x, y);
                 tileView.slideToAndCenterWithScale(player.getPoint().getX(),player.getPoint().getY(),1f);

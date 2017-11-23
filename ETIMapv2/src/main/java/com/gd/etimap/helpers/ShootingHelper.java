@@ -37,11 +37,13 @@ public class ShootingHelper {
     }
 
     public void shoot(ListOfAllObjects listOfAllObjects, TileView tileView){
-        Enemy shootedEnemy = (Enemy) isShooted(listOfAllObjects);
-        if(shootedEnemy != null){
-            shootedEnemy.setHp(shootedEnemy.getHp() - 20);
-            if(removeAllDeadEnemies(listOfAllObjects, tileView))
-                changePictureOfEnemy(shootedEnemy, tileView);
+        if(!AnimationOfBulletHelper.isAnimationOfBullet){
+            Enemy shootedEnemy = (Enemy) isShooted(listOfAllObjects);
+            if(shootedEnemy != null){
+                shootedEnemy.setHp(shootedEnemy.getHp() - 20);
+                if(removeAllDeadEnemies(listOfAllObjects, tileView))
+                    changePictureOfEnemy(shootedEnemy, tileView);
+            }
         }
     }
 
