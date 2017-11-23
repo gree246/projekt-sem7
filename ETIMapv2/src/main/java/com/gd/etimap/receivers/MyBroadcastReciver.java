@@ -28,7 +28,8 @@ public class MyBroadcastReciver extends BroadcastReceiver {
     private double x=4000;
     private double y=4000;
     private int floor=0;
-    String serverIP="192.168.43.106";
+
+    String serverIP="192.168.137.1";
     Player player;
     TileView tileView;
 
@@ -98,17 +99,17 @@ public class MyBroadcastReciver extends BroadcastReceiver {
                     y = Double.parseDouble(responseLine.split(";")[1]);
                     floor = Integer.parseInt(responseLine.split(";")[2]);
                 }catch (Exception e){
-//                    x=4000;
-//                    y=4000;
-//                    floor=0;
+                    x = player.getPoint().getX();
+                    y = player.getPoint().getY();
                 }
-                player.getPoint().setX(0.8*player.getPoint().getX()+0.2* x);
-                player.getPoint().setY(0.8*player.getPoint().getY()+0.2*y);
+                player.getPoint().setX(0*player.getPoint().getX()+1* x);
+                player.getPoint().setY(0*player.getPoint().getY()+1*y);
 
-               x = player.getPoint().getX();
-               y = player.getPoint().getY();
+
 
                 tileView.moveMarker(player.getMarker(), x, y);
+                tileView.slideToAndCenterWithScale(player.getPoint().getX(),player.getPoint().getY(),1f);
+                tileView.scrollToAndCenter(player.getPoint().getX(),player.getPoint().getY());
             }
         };
         asyncTask.execute();

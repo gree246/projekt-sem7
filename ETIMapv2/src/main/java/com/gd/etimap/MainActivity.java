@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
     private AnimationOfBulletHelper animationOfBulletHelper = new AnimationOfBulletHelper();
     private SiHelper siHelper = new SiHelper();
 
-    private static int updateGUIInterval  = 50;
+    private static int updateGUIInterval  = 2000;
     private updateGUIThread updateGUIThread=new updateGUIThread();
     private Handler updateGUIHandler = new Handler();
 
@@ -110,8 +110,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void doListenersAndTileLayout(){
         RelativeLayout tileLayout = (RelativeLayout) findViewById(R.id.MapLayoutId) ;
-        tileLayout.setScaleX(2);
-        tileLayout.setScaleY(2);
+        tileLayout.setScaleX(1);
+        tileLayout.setScaleY(1);
         tileLayout.setMinimumWidth(600);
         tileLayout.setMinimumHeight(600);
 

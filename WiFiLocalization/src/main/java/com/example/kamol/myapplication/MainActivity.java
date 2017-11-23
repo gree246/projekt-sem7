@@ -64,13 +64,74 @@ public class MainActivity extends AppCompatActivity {
     private EditText wyslijIPET;
     private TextView status;
     private Button sendButton;
+    private Button centerButton;
     private String resault="";
     private TileView tileView = null;
     private int centerX=0;
     private int centerY=0;
-    private int floor=0;
+    private int floor=1;
     private boolean send = false;
+    private String previousData;
     MyBroadcastReciver reciver = new MyBroadcastReciver();;
+
+    class getAsyncTask extends AsyncTask<Void, Void,Void>{
+        String out;
+        //GET network request
+        private String GET(OkHttpClient client, HttpUrl url) throws IOException {
+            Request request = new Request.Builder()
+                    .url(url)
+                    .build();
+            Response response = client.newCall(request).execute();
+            return response.body().string();
+        }
+
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            OkHttpClient client = new OkHttpClient.Builder()
+                    .connectTimeout(1, TimeUnit.SECONDS)
+                    .writeTimeout(1, TimeUnit.SECONDS)
+                    .readTimeout(1, TimeUnit.SECONDS)
+                    .build();
+
+            error=false;
+            HttpUrl url = new HttpUrl.Builder()
+                    .scheme("http") //http
+                    .host("etiinawazja.000webhostapp.com")
+                    .port(80)
+                    .addPathSegment("getPreviousData.php")//adds "/pathSegment" at the end of hostname
+                    .build();
+            try {
+                out=GET(client, url);
+
+
+            } catch (IOException e) {
+//                    e.printStackTrace();
+                Log.d("sending", "error");
+                error = true;
+            } catch (Exception e) {
+                Log.e("OTHER EXCEPTIONS", e.toString());
+                error = true;
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            if (error) {
+                status.setText("ERROR");
+                previousData = "";
+            }
+            else {
+                status.setText("ok");
+                previousData = out;
+            }
+
+        }
+
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
 
         tileView = new TileView(this);
         tileView.setSize( 8192, 8192 );  // the original size of the untiled image
-        tileView.addDetailLevel( 1f, "tiles/tile_%d_%d.png", 256, 256);
+        tileView.addDetailLevel( 1f, "floor1/tile_1_%d_%d.png", 256, 256);
 //        tileView.slideToAndCenterWithScale(4000,4000,1f);
         tileView.setScale(1.0f);
         tileView.scrollToAndCenter(4000,4000);
@@ -114,14 +175,44 @@ public class MainActivity extends AppCompatActivity {
         tileView.scrollTo(4500,4500);
 
 
+        centerButton = (Button) findViewById(R.id.centerButtonId);
+        centerButton.setOnClickListener(new View.OnClickListener() {
+                                          @Override
+                                          public void onClick(View view) {
+
+                                              nazwaPomiaru=nazwaPomiaruET.getText().toString();
+                                              String[] lines = previousData.split(System.getProperty("line.separator"));
+                                              int index=Integer.parseInt(nazwaPomiaru.substring(1));
+                                              for (String line:lines
+                                                   ) {
+                                                  try {
+                                                      int idx2=Integer.parseInt(line.substring(1, 4));
+                                                      if (idx2== index) {
+
+                                                          double x = Double.parseDouble(line.split("\\|")[0].split(";")[2]);
+                                                          double y = Double.parseDouble(line.split("\\|")[0].split(";")[3]);
+                                                          double scale=tileView.getScale();
+                                                          tileView.slideToAndCenter((int) Math.round(scale*x),(int) Math.round(scale*y));
+                                                          x=tileView.getScrollX();
+                                                          y=tileView.getScrollY();
+                                                          break;
+                                                      }
+                                                  }
+                                                  catch(Exception e){
+                                                          status.setText("errorStringParse");
+                                                      }
+
+
+                                              }
+
+                                          }
+                                      });
+
         sendButton = (Button) findViewById(R.id.sendButtonId);
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                send=true;
-                if(wifiManager.startScan()){
-                    status.setText("wait");
-                };
+
 
                 wyslijIP=wyslijIPET.getText().toString();
               //  centerX=tileView.getCoordinateTranslater().translateAndScaleX(tileView.getScrollX(),tileView.getScaleX())+256;
@@ -140,6 +231,14 @@ public class MainActivity extends AppCompatActivity {
 
 
 //                nazwaPomiaruET.setText(Integer.toString(tileView.getScrollX()));
+                send=true;
+                if(wifiManager.startScan()){
+                    status.setText("wait");
+                };
+                centerButton.callOnClick();
+
+
+
 
             }
         });
@@ -153,6 +252,9 @@ public class MainActivity extends AppCompatActivity {
         wifiLock = wifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL, "sdgs");
         wifiLock.setReferenceCounted(true);
         wifiLock.acquire();
+
+        getAsyncTask atask = new getAsyncTask();
+        atask.execute();
 
         //sendData(reciver.resault);
 
@@ -196,6 +298,8 @@ public class MainActivity extends AppCompatActivity {
                     buffer.append(scanResult.level);
                     buffer.append(" ");
                     buffer.append(scanResult.frequency);
+                    buffer.append(" ");
+                    buffer.append(scanResult.SSID);
                     buffer.append(";");
                 }
 //            wifiSignal.setText(buffer);
@@ -203,7 +307,7 @@ public class MainActivity extends AppCompatActivity {
                 status.setText("getWifi1");
                 if (send) {
                     status.setText("getWifi2");
-                    sendData(resault);
+                    sendDataHttp(resault);
 
                     send = false;
                 }
@@ -284,14 +388,7 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
-        //GET network request
-        public String GET(OkHttpClient client, HttpUrl url) throws IOException {
-            Request request = new Request.Builder()
-                    .url(url)
-                    .build();
-            Response response = client.newCall(request).execute();
-            return response.body().string();
-        }
+
 
         //POST network request
         public String POST(OkHttpClient client, HttpUrl url, RequestBody body) throws IOException {
@@ -361,6 +458,8 @@ public class MainActivity extends AppCompatActivity {
 
 
         }
+
+
 
 
         private void sendDataHttp(String buffero) {
