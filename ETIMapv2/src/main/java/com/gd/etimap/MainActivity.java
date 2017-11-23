@@ -1,10 +1,16 @@
 package com.gd.etimap;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.IntentFilter;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
@@ -30,7 +36,25 @@ import butterknife.ButterKnife;
 import static com.gd.etimap.helpers.AnimationOfBulletHelper.isAnimationOfBullet;
 import static com.gd.etimap.receivers.MyBroadcastReciver.wifiManager;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SensorEventListener{
+
+
+    int mAzimuth;
+    private SensorManager mSensorManager;
+    private Sensor mRotationV, mAccelerometer, mMagnetometer;
+    boolean haveSensor = false, haveSensor2 = false;
+    float[] rMat = new float[9];
+    float[] orientation = new float[3];
+    private float[] mLastAccelerometer = new float[3];
+    private float[] mLastMagnetometer = new float[3];
+    private boolean mLastAccelerometerSet = false;
+    private boolean mLastMagnetometerSet = false;
+
+
+
+
+
+
 
     @BindView(R2.id.rotateLeft_id)
     Button rotateLeftButton;
@@ -68,6 +92,9 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         createTileView();
 
+        mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        start();
+
         shootingHelper = new ShootingHelper(R.mipmap.enemy1, R.mipmap.enemy2, R.mipmap.enemy3, R.mipmap.enemy4, this);
         createObjectsHelper.createPlayer(listOfAllObjects, imageTransformationHelper.createImageView(R.mipmap.player2, this, false));
         ImageView bullet = imageTransformationHelper.createImageView(R.mipmap.bullet , this, false);
@@ -76,6 +103,7 @@ public class MainActivity extends AppCompatActivity {
         createObjectsHelper.createBullet(listOfAllObjects, bullet);
         drawingHelper.drawPlayer(listOfAllObjects, tileView);
 
+        //SensorActivity sensorActivity = new SensorActivity(listOfAllObjects, tileView, this);
         doConnetion();
         doListenersAndTileLayout();
         updateGUIHandler.postDelayed(updateGUIThread, updateGUIInterval);
@@ -167,4 +195,122 @@ public class MainActivity extends AppCompatActivity {
             updateGUIHandler.postDelayed(this, updateGUIInterval);
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public void start() {
+        if (mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR) == null) {
+            if ((mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) == null) || (mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD) == null)) {
+                noSensorsAlert();
+            }
+            else {
+                mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+                mMagnetometer = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+                haveSensor = mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_UI);
+                haveSensor2 = mSensorManager.registerListener(this, mMagnetometer, SensorManager.SENSOR_DELAY_UI);
+            }
+        }
+        else{
+            mRotationV = mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
+            haveSensor = mSensorManager.registerListener(this, mRotationV, SensorManager.SENSOR_DELAY_UI);
+        }
+    }
+
+    public void noSensorsAlert(){
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+        alertDialog.setMessage("Your device doesn't support the Compass.")
+                .setCancelable(false)
+                .setNegativeButton("Close",new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        finish();
+                    }
+                });
+        alertDialog.show();
+    }
+
+    public void stop() {
+        if (haveSensor) {
+            mSensorManager.unregisterListener(this, mRotationV);
+        }
+        else {
+            mSensorManager.unregisterListener(this, mAccelerometer);
+            mSensorManager.unregisterListener(this, mMagnetometer);
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        stop();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        start();
+    }
+
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        if (event.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR) {
+            SensorManager.getRotationMatrixFromVector(rMat, event.values);
+            mAzimuth = (int) (Math.toDegrees(SensorManager.getOrientation(rMat, orientation)[0]) + 360) % 360;
+        }
+
+        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+            System.arraycopy(event.values, 0, mLastAccelerometer, 0, event.values.length);
+            mLastAccelerometerSet = true;
+        } else if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
+            System.arraycopy(event.values, 0, mLastMagnetometer, 0, event.values.length);
+            mLastMagnetometerSet = true;
+        }
+        if (mLastAccelerometerSet && mLastMagnetometerSet) {
+            SensorManager.getRotationMatrix(rMat, null, mLastAccelerometer, mLastMagnetometer);
+            SensorManager.getOrientation(rMat, orientation);
+            mAzimuth = (int) (Math.toDegrees(SensorManager.getOrientation(rMat, orientation)[0]) + 360) % 360;
+        }
+
+        mAzimuth = Math.round(mAzimuth);
+        imageTransformationHelper.rotateFromSensor(listOfAllObjects, tileView, -mAzimuth);
+
+        String where = "NW";
+
+        if (mAzimuth >= 350 || mAzimuth <= 10)
+            where = "N";
+        if (mAzimuth < 350 && mAzimuth > 280)
+            where = "NW";
+        if (mAzimuth <= 280 && mAzimuth > 260)
+            where = "W";
+        if (mAzimuth <= 260 && mAzimuth > 190)
+            where = "SW";
+        if (mAzimuth <= 190 && mAzimuth > 170)
+            where = "S";
+        if (mAzimuth <= 170 && mAzimuth > 100)
+            where = "SE";
+        if (mAzimuth <= 100 && mAzimuth > 80)
+            where = "E";
+        if (mAzimuth <= 80 && mAzimuth > 10)
+            where = "NE";
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int i) {
+
+    }
 }
+

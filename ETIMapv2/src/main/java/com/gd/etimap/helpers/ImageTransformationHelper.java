@@ -13,6 +13,11 @@ import com.qozix.tileview.TileView;
 
 public class ImageTransformationHelper {
 
+    public void rotateFromSensor(ListOfAllObjects listOfAllObjects, TileView tileView, int azimuth){
+        tileView.setRotation(azimuth);
+        listOfAllObjects.findAllEnemiesOrPlayerOrBullet("Player").get(0).getMarker().setRotation(azimuth);
+    }
+
     public void rotate(ListOfAllObjects listOfAllObjects, boolean rightDirection, TileView tileView){
         if(rightDirection) {
             tileView.setRotation(tileView.getRotation()-10);
