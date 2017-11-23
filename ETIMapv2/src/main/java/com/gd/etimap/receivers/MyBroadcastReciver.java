@@ -108,7 +108,7 @@ public class MyBroadcastReciver extends BroadcastReceiver {
                 player.getPoint().setX(0*player.getPoint().getX()+1* x);
                 player.getPoint().setY(0*player.getPoint().getY()+1*y);
 
-                drawingHelper.changeFloor(tileView, floor);
+               // drawingHelper.changeFloor(tileView, floor);
 
                 tileView.moveMarker(player.getMarker(), x, y);
                 tileView.slideToAndCenterWithScale(player.getPoint().getX(),player.getPoint().getY(),1f);
