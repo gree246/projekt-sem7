@@ -6,6 +6,7 @@ import com.gd.etimap.atributtes.Point;
 import com.gd.etimap.objects.Enemy;
 import com.gd.etimap.objects.ListOfAllObjects;
 import com.gd.etimap.objects.OurObject;
+import com.gd.etimap.objects.Player;
 import com.qozix.tileview.TileView;
 
 import java.util.ArrayList;
@@ -13,6 +14,8 @@ import java.util.List;
 
 import solid.functions.Action1;
 import solid.stream.Stream;
+
+import static solid.collectors.ToList.toList;
 
 /**
  * Created by Marcin on 29.10.2017.
@@ -34,6 +37,52 @@ public class ShootingHelper {
         fourty = resFourty;
         tweenty = resTweenty;
         this.context = context;
+    }
+
+    public void shootToPlayer(ListOfAllObjects listOfAllObjects, TileView tileView){
+        if(!AnimationOfBulletHelper.isAnimationOfBullet2) {
+            List<Enemy> listOfAllEnemies = Stream.stream(listOfAllObjects.findAllVisibleEnemies()).map(o -> ((Enemy) o)).collect(toList());
+            Enemy shooter = null;
+
+            if(!listOfAllEnemies.isEmpty()){
+                if(listOfAllEnemies.size() == 2)
+                    shooter = Math.random() > 0.5 ? listOfAllEnemies.get(1):listOfAllEnemies.get(0);
+                else
+                    shooter = listOfAllEnemies.get(0);
+
+                OurObject player = listOfAllObjects.findAllEnemiesOrPlayerOrBullet("Player").get(0);
+
+                List<Point> listOfShootedPoints = countListOfShootedPointsForEnemy(shooter, player);
+                ((Player) player).setHp(((Player) player).getHp() - 20);
+                //changePictureOfPlayer(player, tileView);
+
+                if(AnimationOfBulletHelper.listOfShootedPoints2.isEmpty())
+                    AnimationOfBulletHelper.listOfShootedPoints2 = listOfShootedPoints;
+                AnimationOfBulletHelper.isAnimationOfBullet2 = true;
+
+                /*if(((Player) player).getHp() <= 0)
+                endGame();*/
+            }
+
+        }
+    }
+
+    private List<Point> countListOfShootedPointsForEnemy(Enemy shooter, OurObject player){
+        double x1 = player.getPoint().getX();
+        double y1 = player.getPoint().getY();
+        double x2 = shooter.getPoint().getX();
+        double y2 = shooter.getPoint().getY();
+        List<Point> list = new ArrayList<>();
+
+        double x = (x1-x2)/20;
+        for(int i=0;i<20;i++){
+            list.add(countOnePointForEnemy(x2, x1, y2, y1, x2+x*i));
+        }
+        return list;
+    }
+
+    private Point countOnePointForEnemy(double x1, double x2, double y1, double y2, double x){
+        return new Point(x, (((y2-y1)*(x-x1)/(x2-x1)) + y1));
     }
 
     public void shoot(ListOfAllObjects listOfAllObjects, TileView tileView){
@@ -144,5 +193,24 @@ public class ShootingHelper {
             ourObject.setImageView(imageTransformationHelper.createImageView(tweenty, context, false));
         }
         return (Enemy) ourObject;
+    }
+
+    private OurObject changePictureOfPlayer(OurObject player, TileView tileView){
+        tileView.removeMarker(player.getMarker());
+
+        int hp = ((Player) player).getHp();
+        if(hp <= 400 && hp > 300){
+            player.setImageView(imageTransformationHelper.createImageView(eighty, context, false));
+        }else if(hp <= 300 && hp > 200){
+            player.setImageView(imageTransformationHelper.createImageView(sixty, context, false));
+        }else if(hp <= 200 && hp > 100){
+            player.setImageView(imageTransformationHelper.createImageView(fourty, context, false));
+        }else if(hp <= 100){
+            player.setImageView(imageTransformationHelper.createImageView(tweenty, context, false));
+        }
+
+        drawingHelper.draw(player, tileView);
+
+        return (Player) player;
     }
 }

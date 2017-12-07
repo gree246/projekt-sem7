@@ -19,6 +19,10 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.List;
 
+import static com.gd.etimap.MainActivity.canSend;
+import static com.gd.etimap.helpers.AnimationOfBulletHelper.isAnimationOfBullet;
+import static com.gd.etimap.helpers.AnimationOfBulletHelper.isAnimationOfBullet2;
+
 /**
  * Created by Marcin on 20.11.2017.
  */
@@ -43,20 +47,22 @@ public class MyBroadcastReciver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        try {
-            StringBuffer buffer = new StringBuffer();
-            List<ScanResult> list = wifiManager.getScanResults();
-            for (ScanResult scanResult : list) {
-                buffer.append(scanResult.BSSID);
-                buffer.append(" ");
-                buffer.append(scanResult.level);
-                buffer.append(" ");
-                buffer.append(scanResult.frequency);
-                buffer.append(";");
+        if(!isAnimationOfBullet && !isAnimationOfBullet2 && canSend) {
+            try {
+                StringBuffer buffer = new StringBuffer();
+                List<ScanResult> list = wifiManager.getScanResults();
+                for (ScanResult scanResult : list) {
+                    buffer.append(scanResult.BSSID);
+                    buffer.append(" ");
+                    buffer.append(scanResult.level);
+                    buffer.append(" ");
+                    buffer.append(scanResult.frequency);
+                    buffer.append(";");
+                }
+                sendData(buffer.toString());
+            }catch (Exception e){
+                e.printStackTrace();
             }
-            sendData(buffer.toString());
-        }catch (Exception e){
-            e.printStackTrace();
         }
     }
 

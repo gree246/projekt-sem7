@@ -21,7 +21,10 @@ import lombok.ToString;
 @NoArgsConstructor
 public class Player extends OurObject{
 
-    public Player(Point point, String floor, ImageView imageView, View marker) {
+    private int hp;
+
+    public Player(Point point, String floor, ImageView imageView, View marker, int hp) {
         super(point, floor, imageView, marker);
+        this.hp = hp;
     }
 }

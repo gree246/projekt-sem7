@@ -22,7 +22,10 @@ import lombok.ToString;
 @NoArgsConstructor
 public class Bullet extends OurObject{
 
-    public Bullet(Point point, String floor, ImageView imageView, View marker) {
+    boolean isForEnemy;
+
+    public Bullet(Point point, String floor, ImageView imageView, View marker, boolean isForEnemy) {
         super(point, floor, imageView, marker);
+        this.isForEnemy = isForEnemy;
     }
 }

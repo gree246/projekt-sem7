@@ -34,6 +34,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static com.gd.etimap.helpers.AnimationOfBulletHelper.isAnimationOfBullet;
+import static com.gd.etimap.helpers.AnimationOfBulletHelper.isAnimationOfBullet2;
 import static com.gd.etimap.receivers.MyBroadcastReciver.wifiManager;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener{
@@ -62,6 +63,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     Button buttonFUp;
 
     public static volatile double counter = -1;
+    public static volatile double counter2 = -1;
+    public static volatile boolean canSend = false;
 
     public static int floor = 0;
 
@@ -94,7 +97,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         ImageView bullet = imageTransformationHelper.createImageView(R.mipmap.bullet , this, false);
         bullet.setScaleX((float)0.3);
         bullet.setScaleY((float)0.3);
-        createObjectsHelper.createBullet(listOfAllObjects, bullet);
+        createObjectsHelper.createBullets(listOfAllObjects, bullet, imageTransformationHelper.createImageView(R.mipmap.bullet , this, false));
         drawingHelper.drawPlayer(listOfAllObjects, tileView);
 
         //SensorActivity sensorActivity = new SensorActivity(listOfAllObjects, tileView, this);
@@ -159,7 +162,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         gunButton.setOnClickListener(view -> shootingHelper.shoot(listOfAllObjects, tileView));
     }
 
-    private void doAnimation(){
+    private void bulletPlayerAnimation(){
         if(isAnimationOfBullet && AnimationOfBulletHelper.listOfShootedPoints.size() > 1){
             updateGUIInterval = 10;
             counter++;
@@ -168,9 +171,31 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 counter = -1;
                 isAnimationOfBullet = false;
                 AnimationOfBulletHelper.listOfShootedPoints.clear();
-                updateGUIInterval = 50;
+                updateGUIInterval = 1000;
             }
         }
+    }
+
+    private void bulletEnemyAnimation(){
+        if(isAnimationOfBullet2 && AnimationOfBulletHelper.listOfShootedPoints2.size() > 1){
+            updateGUIInterval = 10;
+            counter2++;
+            animationOfBulletHelper.doAnimationOfBulletForEnemy(listOfAllObjects, counter2, tileView);
+            if(counter2 == (AnimationOfBulletHelper.listOfShootedPoints2.size()-1)){
+                counter2 = -1;
+                isAnimationOfBullet2 = false;
+                AnimationOfBulletHelper.listOfShootedPoints2.clear();
+                updateGUIInterval = 1000;
+            }
+        }
+    }
+
+    private void doAnimation(){
+        bulletPlayerAnimation();
+        bulletEnemyAnimation();
+
+        if(Math.random() > 0.8)
+            shootingHelper.shootToPlayer(listOfAllObjects, tileView);
         /*if(Math.random() < 0.5)
             siHelper.doEnemySi(listOfAllObjects, tileView);*/
         if(Math.random() < 0.25){
@@ -185,7 +210,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             tileView.slideToAndCenterWithScale(player.getPoint().getX(),player.getPoint().getY(),1f);
             tileView.scrollToAndCenter(player.getPoint().getX(),player.getPoint().getY());
             doAnimation();
+            canSend = true;
             wifiManager.startScan();
+            canSend = false;
             updateGUIHandler.postDelayed(this, updateGUIInterval);
         }
     }

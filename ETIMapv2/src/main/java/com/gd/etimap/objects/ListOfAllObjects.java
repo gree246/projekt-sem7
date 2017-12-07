@@ -39,6 +39,22 @@ public class ListOfAllObjects {
         return Stream.stream(this.listOfOurObjects).filter(r -> filterPlayer(r)).collect(toList());
     }
 
+    public OurObject findBulletForPlayer(){
+        return Stream.stream(findAllEnemiesOrPlayerOrBullet("Bullet"))
+                .map(o -> ((Bullet) o))
+                .filter(b -> !b.isForEnemy)
+                .collect(toList())
+                .get(0);
+    }
+
+    public OurObject findBulletForEnemy(){
+        return Stream.stream(findAllEnemiesOrPlayerOrBullet("Bullet"))
+                .map(o -> ((Bullet) o))
+                .filter(b -> b.isForEnemy)
+                .collect(toList())
+                .get(0);
+    }
+
     public List<OurObject> findAllVisibleEnemiesWhichHpIsZero(){
         return Stream.stream(findAllVisibleEnemies()).filter(e -> filterHp(e)).collect(toList());
     }
@@ -78,8 +94,8 @@ public class ListOfAllObjects {
         return ourObject instanceof Player;
     }
 
-    public void createBullet(ImageView imageView){
-        listOfOurObjects.add(new Bullet(new Point(0, 0), "1", imageView, null));
+    public void createBullet(ImageView imageView, boolean isForEnemy){
+        listOfOurObjects.add(new Bullet(new Point(0, 0), "1", imageView, null, isForEnemy));
     }
 
     public void createEnemy(Point point, ImageView imageView){
@@ -87,7 +103,7 @@ public class ListOfAllObjects {
     }
 
     public void createPlayer(Point point, ImageView imageView){
-        listOfOurObjects.add(new Player(point, "1", imageView, null));
+        listOfOurObjects.add(new Player(point, "1", imageView, null, 500));
     }
 
     public void removeAllObjects(){

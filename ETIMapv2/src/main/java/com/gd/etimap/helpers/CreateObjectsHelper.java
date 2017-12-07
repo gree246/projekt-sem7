@@ -19,7 +19,10 @@ public class CreateObjectsHelper {
         listOfAllObjects.createPlayer(new Point(PLAYER_X, PLAYER_Y), imageViewPlayer);
     }
 
-    public void createBullet(ListOfAllObjects listOfAllObjects, ImageView imageViewBullet){
-        listOfAllObjects.createBullet(imageViewBullet);
+    public void createBullets(ListOfAllObjects listOfAllObjects, ImageView imageViewBullet1, ImageView imageViewBullet2){
+        imageViewBullet2.setScaleX((float)0.2);
+        imageViewBullet2.setScaleY((float)0.2);
+        listOfAllObjects.createBullet(imageViewBullet1, false);
+        listOfAllObjects.createBullet(imageViewBullet2, true);
     }
 }

@@ -16,11 +16,15 @@ public class AnimationOfBulletHelper {
 
     public static volatile boolean isAnimationOfBullet = false;
     public static List<Point> listOfShootedPoints = new ArrayList<>();
+
+    public static volatile boolean isAnimationOfBullet2 = false;
+    public static List<Point> listOfShootedPoints2 = new ArrayList<>();
+
     private DrawingHelper drawingHelper = new DrawingHelper();
 
     public void doAnimationOfBullet(ListOfAllObjects listOfAllObjects, double counter, TileView tileView){
         Player palyer = (Player) listOfAllObjects.findAllEnemiesOrPlayerOrBullet("Player").get(0);
-        Bullet bullet = (Bullet) listOfAllObjects.findAllEnemiesOrPlayerOrBullet("Bullet").get(0);
+        Bullet bullet = (Bullet) listOfAllObjects.findBulletForPlayer();
         bullet.setFloor(palyer.getFloor());
 
         if(counter == 0){
@@ -35,6 +39,30 @@ public class AnimationOfBulletHelper {
         }else {
             try{
                 bullet.setPoint(listOfShootedPoints.get((int) counter));
+                drawingHelper.changePositionToPoint(bullet, tileView);
+            }catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void doAnimationOfBulletForEnemy(ListOfAllObjects listOfAllObjects, double counter, TileView tileView){
+        Player palyer = (Player) listOfAllObjects.findAllEnemiesOrPlayerOrBullet("Player").get(0);
+        Bullet bullet = (Bullet) listOfAllObjects.findBulletForEnemy();
+        bullet.setFloor(palyer.getFloor());
+
+        if(counter == 0){
+            try{
+                bullet.setPoint(listOfShootedPoints2.get((int) counter));
+                drawingHelper.draw(bullet, tileView);
+            }catch (Exception e) {
+                e.printStackTrace();
+            }
+        }else if(counter == (listOfShootedPoints2.size()-1)){
+            tileView.removeMarker(bullet.getMarker());
+        }else {
+            try{
+                bullet.setPoint(listOfShootedPoints2.get((int) counter));
                 drawingHelper.changePositionToPoint(bullet, tileView);
             }catch (Exception e) {
                 e.printStackTrace();
