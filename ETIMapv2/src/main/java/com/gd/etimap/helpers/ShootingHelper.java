@@ -70,7 +70,7 @@ public class ShootingHelper {
             for(OurObject o: listOfAllVisibleEnemies){
                 rX = p.getX() - o.getPoint().getX();
                 rY = p.getY() - o.getPoint().getY();
-                if((Math.abs(rX) + Math.abs(rY)) < 33){
+                if((Math.abs(rX) + Math.abs(rY)) < 55){
                     AnimationOfBulletHelper.listOfShootedPoints = helperList;
                     objectToReturn = o;
                     break breakFromLoop;

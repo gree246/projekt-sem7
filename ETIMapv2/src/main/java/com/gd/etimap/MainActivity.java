@@ -50,12 +50,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private boolean mLastAccelerometerSet = false;
     private boolean mLastMagnetometerSet = false;
 
-
-
-
-
-
-
     @BindView(R2.id.rotateLeft_id)
     Button rotateLeftButton;
     @BindView(R2.id.rotateRight_id)
@@ -82,7 +76,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private AnimationOfBulletHelper animationOfBulletHelper = new AnimationOfBulletHelper();
     private SiHelper siHelper = new SiHelper();
 
-    private static int updateGUIInterval  = 2000;
+    private static int updateGUIInterval  = 1000;
     private updateGUIThread updateGUIThread=new updateGUIThread();
     private Handler updateGUIHandler = new Handler();
 
@@ -179,7 +173,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
         /*if(Math.random() < 0.5)
             siHelper.doEnemySi(listOfAllObjects, tileView);*/
-        if(Math.random() < 0.02){
+        if(Math.random() < 0.25){
             drawingHelper.drawEnemy(listOfAllObjects, imageTransformationHelper.createImageView(R.mipmap.enemy0, this, false), tileView);
         }
     }
@@ -195,22 +189,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             updateGUIHandler.postDelayed(this, updateGUIInterval);
         }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     public void start() {
         if (mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR) == null) {
@@ -286,7 +264,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
 
         mAzimuth = Math.round(mAzimuth);
-        imageTransformationHelper.rotateFromSensor(listOfAllObjects, tileView, -mAzimuth);
+
+        //DO ODKOMENTOWANIA
+        //imageTransformationHelper.rotateFromSensor(listOfAllObjects, tileView, -mAzimuth);
 
         String where = "NW";
 

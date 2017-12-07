@@ -15,7 +15,7 @@ public class ImageTransformationHelper {
 
     public void rotateFromSensor(ListOfAllObjects listOfAllObjects, TileView tileView, int azimuth){
         tileView.setRotation(azimuth);
-        listOfAllObjects.findAllEnemiesOrPlayerOrBullet("Player").get(0).getMarker().setRotation(azimuth);
+        listOfAllObjects.findAllEnemiesOrPlayerOrBullet("Player").get(0).getMarker().setRotation(-azimuth);
     }
 
     public void rotate(ListOfAllObjects listOfAllObjects, boolean rightDirection, TileView tileView){
@@ -24,7 +24,6 @@ public class ImageTransformationHelper {
         } else {
             tileView.setRotation(tileView.getRotation()+10);
         }
-
         // rotacja strzałki
         OurObject player = listOfAllObjects.findAllEnemiesOrPlayerOrBullet("Player").get(0);
         rotateObject(player, rightDirection);
