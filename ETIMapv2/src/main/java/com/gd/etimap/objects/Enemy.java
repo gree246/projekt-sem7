@@ -3,6 +3,7 @@ package com.gd.etimap.objects;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.gd.etimap.MainActivity;
 import com.gd.etimap.atributtes.EnemyAnimation;
 import com.gd.etimap.atributtes.Point;
 
@@ -29,8 +30,8 @@ public class Enemy extends OurObject{
     public Enemy(Point point, String floor, ImageView imageView,boolean visible, int hp, View marker) {
 
         super(point, floor, imageView, marker);
-        imageView.setScaleX((float)0.5);
-        imageView.setScaleY((float)0.5);
+        imageView.setScaleX(MainActivity.scaleOfAvatars);
+        imageView.setScaleY(MainActivity.scaleOfAvatars);
         this.hp = hp;
         this.visible = visible;
     }

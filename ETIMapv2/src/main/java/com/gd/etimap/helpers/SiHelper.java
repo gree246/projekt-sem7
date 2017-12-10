@@ -20,12 +20,14 @@ import static solid.collectors.ToList.toList;
  */
 
 public class SiHelper {
-
+    double playerX, playerY;
     DrawingHelper drawingHelper = new DrawingHelper();
 
 
     public void doEnemySi(ListOfAllObjects listOfAllObjects, TileView tileView){
         OurObject player = listOfAllObjects.findAllEnemiesOrPlayerOrBullet("Player").get(0);
+        playerX = player.getPoint().getX();
+        playerY = player.getPoint().getY();
         List<OurObject> listOfVisibleEnemies = listOfAllObjects.findAllVisibleEnemies();
         List<OurObject> listOfNewVisibleEnemies = getNewEnemies(listOfVisibleEnemies);
         List<OurObject> listOfOldVisibleEnemies = getOldEnemies(listOfVisibleEnemies);
@@ -77,35 +79,42 @@ public class SiHelper {
 
         if(MainActivity.floor == -1)
         {
-            if(enemy.getPoint().getX() <= 1276)
-                signx = '+';
-            else if(enemy.getPoint().getX() >= 6858)
+            if(enemy.getPoint().getX()- playerX > 0)
                 signx = '-';
-            else if(enemy.getPoint().getX() > 5267)
-            {
-                if(rand < 0.7)
-                    signx = '-';
-                else
-                    signx = '+';
-            }
-            else if(enemy.getPoint().getX() < 2867)
-            {
-                if(rand < 0.7)
-                    signx = '+';
-                else
-                    signx = '-';
-            }
             else
-            {
-                if(rand < 0.5)
-                    signx = '+';
-                else
-                    signx = '-';
-            }
+                signx = '+';
 
-            if(enemy.getPoint().getY() <= 4238)
+
+
+//            if(enemy.getPoint().getX() <= 1276)
+//                signx = '+';
+//            else if(enemy.getPoint().getX() >= 6858)
+//                signx = '-';
+//            else if(enemy.getPoint().getX() > 5267)
+//            {
+//                if(rand < 0.7)
+//                    signx = '-';
+//                else
+//                    signx = '+';
+//            }
+//            else if(enemy.getPoint().getX() < 2867)
+//            {
+//                if(rand < 0.7)
+//                    signx = '+';
+//                else
+//                    signx = '-';
+//            }
+//            else
+//            {
+//                if(rand < 0.5)
+//                    signx = '+';
+//                else
+//                    signx = '-';
+//            }
+
+            if(enemy.getPoint().getY() <= 4228)
                 signy = '+';
-            else if(enemy.getPoint().getY() >= 4268)
+            else if(enemy.getPoint().getY() >= 4278)
                 signy = '-';
             else
             {
@@ -117,35 +126,39 @@ public class SiHelper {
         }
         else if(MainActivity.floor > -1 && MainActivity.floor < 8)
         {
-            if(enemy.getPoint().getX() <= 1360)
-                signx = '+';
-            else if(enemy.getPoint().getX() >= 6924)
+            if(enemy.getPoint().getX()- playerX > 0)
                 signx = '-';
-            else if(enemy.getPoint().getX() > 5467)
-            {
-                if(rand < 0.7)
-                    signx = '-';
-                else
-                    signx = '+';
-            }
-            else if(enemy.getPoint().getX() < 3067)
-            {
-                if(rand < 0.7)
-                    signx = '+';
-                else
-                    signx = '-';
-            }
             else
-            {
-                if(rand < 0.5)
-                    signx = '+';
-                else
-                    signx = '-';
-            }
+                signx = '+';
+//            if(enemy.getPoint().getX() <= 1360)
+//                signx = '+';
+//            else if(enemy.getPoint().getX() >= 6924)
+//                signx = '-';
+//            else if(enemy.getPoint().getX() > 5467)
+//            {
+//                if(rand < 0.7)
+//                    signx = '-';
+//                else
+//                    signx = '+';
+//            }
+//            else if(enemy.getPoint().getX() < 3067)
+//            {
+//                if(rand < 0.7)
+//                    signx = '+';
+//                else
+//                    signx = '-';
+//            }
+//            else
+//            {
+//                if(rand < 0.5)
+//                    signx = '+';
+//                else
+//                    signx = '-';
+//            }
 
-            if(enemy.getPoint().getY() <= 4280)
+            if(enemy.getPoint().getY() <= 4270)
                 signy = '+';
-            else if(enemy.getPoint().getY() >= 4310)
+            else if(enemy.getPoint().getY() >= 4320)
                 signy = '-';
             else
             {
@@ -156,14 +169,22 @@ public class SiHelper {
             }
         }
 
-        if(signx == '+')
-            pointX = ourObject.getPoint().getX() + 5;
+        if(enemy.getPoint().getX() - playerX < 200 && enemy.getPoint().getX() - playerX > -200)
+        {
+            pointX = ourObject.getPoint().getX();
+        }
         else
-            pointX = ourObject.getPoint().getX() - 5;
+        {
+            if(signx == '+')
+                pointX = ourObject.getPoint().getX() + 10;
+            else
+                pointX = ourObject.getPoint().getX() - 10;
+
+        }
         if(signy == '+')
-            pointY = ourObject.getPoint().getY() + 5;
+            pointY = ourObject.getPoint().getY() + 10;
         else
-            pointY = ourObject.getPoint().getY() - 5;
+            pointY = ourObject.getPoint().getY() - 10;
         ourObject.setPoint(new Point(pointX, pointY));
         drawingHelper.changePositionToPoint(ourObject, tileView);
     }

@@ -3,6 +3,7 @@ package com.gd.etimap.helpers;
 import android.content.Context;
 import android.widget.ImageView;
 
+import com.gd.etimap.MainActivity;
 import com.gd.etimap.atributtes.Point;
 import com.gd.etimap.objects.Enemy;
 import com.gd.etimap.objects.ListOfAllObjects;
@@ -194,8 +195,8 @@ public class ShootingHelper {
         }else if(hp <= 20){
             newImage = imageTransformationHelper.createImageView(tweenty, context, false);
         }
-        newImage.setScaleX((float)0.5);
-        newImage.setScaleY((float)0.5);
+        newImage.setScaleX(MainActivity.scaleOfAvatars);
+        newImage.setScaleY(MainActivity.scaleOfAvatars);
         ourObject.setImageView(newImage);
         return (Enemy) ourObject;
     }
