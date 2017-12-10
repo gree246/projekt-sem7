@@ -93,7 +93,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         start();
 
         shootingHelper = new ShootingHelper(R.mipmap.enemy1, R.mipmap.enemy2, R.mipmap.enemy3, R.mipmap.enemy4, this);
-        createObjectsHelper.createPlayer(listOfAllObjects, imageTransformationHelper.createImageView(R.mipmap.player2, this, false));
+        ImageView player = imageTransformationHelper.createImageView(R.mipmap.player2, this, false);
+        player.setScaleX((float)0.5);
+        player.setScaleY((float)0.5);
+        createObjectsHelper.createPlayer(listOfAllObjects, player);
         ImageView bullet = imageTransformationHelper.createImageView(R.mipmap.bullet , this, false);
         bullet.setScaleX((float)0.3);
         bullet.setScaleY((float)0.3);
@@ -196,8 +199,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         if(Math.random() > 0.8)
             shootingHelper.shootToPlayer(listOfAllObjects, tileView);
-        /*if(Math.random() < 0.5)
-            siHelper.doEnemySi(listOfAllObjects, tileView);*/
+        if(Math.random() < 0.5)
+            siHelper.doEnemySi(listOfAllObjects, tileView);
         if(Math.random() < 0.25){
             drawingHelper.drawEnemy(listOfAllObjects, imageTransformationHelper.createImageView(R.mipmap.enemy0, this, false), tileView);
         }

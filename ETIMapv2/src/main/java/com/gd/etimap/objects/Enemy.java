@@ -27,7 +27,10 @@ public class Enemy extends OurObject{
     private EnemyAnimation enemyAnimation;
 
     public Enemy(Point point, String floor, ImageView imageView,boolean visible, int hp, View marker) {
+
         super(point, floor, imageView, marker);
+        imageView.setScaleX((float)0.5);
+        imageView.setScaleY((float)0.5);
         this.hp = hp;
         this.visible = visible;
     }

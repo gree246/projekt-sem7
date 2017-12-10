@@ -1,6 +1,7 @@
 package com.gd.etimap.helpers;
 
 import android.content.Context;
+import android.widget.ImageView;
 
 import com.gd.etimap.atributtes.Point;
 import com.gd.etimap.objects.Enemy;
@@ -183,15 +184,19 @@ public class ShootingHelper {
 
     private Enemy changePicture(OurObject ourObject){
         int hp = ((Enemy) ourObject).getHp();
+        ImageView newImage = imageTransformationHelper.createImageView(eighty, context, false);
         if(hp <= 80 && hp > 60){
-            ourObject.setImageView(imageTransformationHelper.createImageView(eighty, context, false));
+            newImage = imageTransformationHelper.createImageView(eighty, context, false);
         }else if(hp <= 60 && hp > 40){
-            ourObject.setImageView(imageTransformationHelper.createImageView(sixty, context, false));
+            newImage = imageTransformationHelper.createImageView(sixty, context, false);
         }else if(hp <= 40 && hp > 20){
-            ourObject.setImageView(imageTransformationHelper.createImageView(fourty, context, false));
+            newImage = imageTransformationHelper.createImageView(fourty, context, false);
         }else if(hp <= 20){
-            ourObject.setImageView(imageTransformationHelper.createImageView(tweenty, context, false));
+            newImage = imageTransformationHelper.createImageView(tweenty, context, false);
         }
+        newImage.setScaleX((float)0.5);
+        newImage.setScaleY((float)0.5);
+        ourObject.setImageView(newImage);
         return (Enemy) ourObject;
     }
 

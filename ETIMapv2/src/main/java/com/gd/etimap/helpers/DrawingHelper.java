@@ -38,13 +38,13 @@ public class DrawingHelper {
 
     public void changePositionOfObject(OurObject ourObject, String xOrY, String minusOrPlus, TileView tileView){
         if(xOrY.equals("x") && minusOrPlus.equals("-")){
-            ourObject.getPoint().setX(ourObject.getPoint().getX() - 6);
+            ourObject.getPoint().setX(ourObject.getPoint().getX() - 60);
         }else if(xOrY.equals("x") && minusOrPlus.equals("+")){
-            ourObject.getPoint().setX(ourObject.getPoint().getX() + 6);
+            ourObject.getPoint().setX(ourObject.getPoint().getX() + 60);
         }else if(xOrY.equals("y") && minusOrPlus.equals("-")){
-            ourObject.getPoint().setY(ourObject.getPoint().getY() - 6);
+            ourObject.getPoint().setY(ourObject.getPoint().getY() - 60);
         }else if(xOrY.equals("y") && minusOrPlus.equals("+")) {
-            ourObject.getPoint().setY(ourObject.getPoint().getY() + 6);
+            ourObject.getPoint().setY(ourObject.getPoint().getY() + 60);
         }
         double x = ourObject.getPoint().getX();
         double y = ourObject.getPoint().getY();
@@ -61,7 +61,7 @@ public class DrawingHelper {
         if(listOfAllObjects.findAllVisibleEnemies().size() < 2){
             OurObject player = listOfAllObjects.findAllEnemiesOrPlayerOrBullet("Player").get(0);
             Point point = randPosition();
-            listOfAllObjects.createEnemy(new Point(player.getPoint().getX() + point.getX(), player.getPoint().getY() + point.getY()), imageView);
+            listOfAllObjects.createEnemy(new Point(point.getX(), point.getY()), imageView); //player.getPoint().getX() + , player.getPoint().getY() +
             draw(listOfAllObjects.findAllUnVisibleEnemies().get(0), tileView);
         }
     }
@@ -103,14 +103,29 @@ public class DrawingHelper {
     private Point randPosition(){
         double rand = Math.random();
 
-        if(rand < 0.25)
-            return new Point(150, 170);
-        if(rand > 0.25 && rand < 0.5)
-            return new Point(-150, 170);
-        if(rand > 0.5 && rand < 0.75)
-            return new Point(150, -170);
-        if(rand > 0.75)
-            return new Point(-150, -170);
+        if(MainActivity.floor == -1)
+        {
+            if(rand < 0.25)
+                return new Point(1600, 4243);
+            if(rand > 0.25 && rand < 0.5)
+                return new Point(3726, 4243);
+            if(rand > 0.5 && rand < 0.75)
+                return new Point(6550, 4243);
+            if(rand > 0.75)
+                return new Point(4660, 4243);
+        }
+        else if(MainActivity.floor >-1 && MainActivity.floor <8)
+        {
+            if(rand < 0.25)
+                return new Point(1650, 4295);
+            if(rand > 0.25 && rand < 0.5)
+                return new Point(3746, 4295);
+            if(rand > 0.5 && rand < 0.75)
+                return new Point(6600, 4295);
+            if(rand > 0.75)
+                return new Point(4700, 4295);
+        }
+        
         return null;
     }
 }
