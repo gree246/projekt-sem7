@@ -20,8 +20,8 @@ public class CreateObjectsHelper {
     }
 
     public void createBullets(ListOfAllObjects listOfAllObjects, ImageView imageViewBullet1, ImageView imageViewBullet2){
-        imageViewBullet2.setScaleX((float)0.2);
-        imageViewBullet2.setScaleY((float)0.2);
+        imageViewBullet2.setScaleX((float)0.25);
+        imageViewBullet2.setScaleY((float)0.25);
         listOfAllObjects.createBullet(imageViewBullet1, false);
         listOfAllObjects.createBullet(imageViewBullet2, true);
     }

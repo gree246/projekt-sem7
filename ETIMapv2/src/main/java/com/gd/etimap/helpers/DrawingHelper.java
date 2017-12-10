@@ -38,13 +38,13 @@ public class DrawingHelper {
 
     public void changePositionOfObject(OurObject ourObject, String xOrY, String minusOrPlus, TileView tileView){
         if(xOrY.equals("x") && minusOrPlus.equals("-")){
-            ourObject.getPoint().setX(ourObject.getPoint().getX() - 60);
+            ourObject.getPoint().setX(ourObject.getPoint().getX() - 10);
         }else if(xOrY.equals("x") && minusOrPlus.equals("+")){
-            ourObject.getPoint().setX(ourObject.getPoint().getX() + 60);
+            ourObject.getPoint().setX(ourObject.getPoint().getX() + 10);
         }else if(xOrY.equals("y") && minusOrPlus.equals("-")){
-            ourObject.getPoint().setY(ourObject.getPoint().getY() - 60);
+            ourObject.getPoint().setY(ourObject.getPoint().getY() - 10);
         }else if(xOrY.equals("y") && minusOrPlus.equals("+")) {
-            ourObject.getPoint().setY(ourObject.getPoint().getY() + 60);
+            ourObject.getPoint().setY(ourObject.getPoint().getY() + 10);
         }
         double x = ourObject.getPoint().getX();
         double y = ourObject.getPoint().getY();

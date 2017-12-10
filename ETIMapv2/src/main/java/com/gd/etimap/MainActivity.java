@@ -94,14 +94,15 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         start();
 
-        shootingHelper = new ShootingHelper(R.mipmap.enemy1, R.mipmap.enemy2, R.mipmap.enemy3, R.mipmap.enemy4, this);
+        shootingHelper = new ShootingHelper(R.mipmap.enemy1, R.mipmap.enemy2, R.mipmap.enemy3, R.mipmap.enemy4,
+                R.mipmap.player1, R.mipmap.player2, R.mipmap.player3, R.mipmap.player4, this);
         ImageView player = imageTransformationHelper.createImageView(R.mipmap.player0, this, false);
         player.setScaleX(MainActivity.scaleOfAvatars);
         player.setScaleY(MainActivity.scaleOfAvatars);
         createObjectsHelper.createPlayer(listOfAllObjects, player);
         ImageView bullet = imageTransformationHelper.createImageView(R.mipmap.bullet , this, false);
-        bullet.setScaleX((float)0.3);
-        bullet.setScaleY((float)0.3);
+        bullet.setScaleX((float)0.25);
+        bullet.setScaleY((float)0.25);
         createObjectsHelper.createBullets(listOfAllObjects, bullet, imageTransformationHelper.createImageView(R.mipmap.bullet , this, false));
         drawingHelper.drawPlayer(listOfAllObjects, tileView);
 
@@ -169,7 +170,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     private void bulletPlayerAnimation(){
         if(isAnimationOfBullet && AnimationOfBulletHelper.listOfShootedPoints.size() > 1){
-            updateGUIInterval = 10;
+            updateGUIInterval = 40;
             counter++;
             animationOfBulletHelper.doAnimationOfBullet(listOfAllObjects, counter, tileView);
             if(counter == (AnimationOfBulletHelper.listOfShootedPoints.size()-1)){
@@ -183,7 +184,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     private void bulletEnemyAnimation(){
         if(isAnimationOfBullet2 && AnimationOfBulletHelper.listOfShootedPoints2.size() > 1){
-            updateGUIInterval = 10;
+            updateGUIInterval = 40;
             counter2++;
             animationOfBulletHelper.doAnimationOfBulletForEnemy(listOfAllObjects, counter2, tileView);
             if(counter2 == (AnimationOfBulletHelper.listOfShootedPoints2.size()-1)){

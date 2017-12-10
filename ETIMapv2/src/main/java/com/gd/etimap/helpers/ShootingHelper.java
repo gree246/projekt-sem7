@@ -29,15 +29,24 @@ public class ShootingHelper {
     private static int sixty;
     private static int fourty;
     private static int tweenty;
+    private static int player1;
+    private static int player2;
+    private static int player3;
+    private static int player4;
     private Context context;
     private ImageTransformationHelper imageTransformationHelper = new ImageTransformationHelper();
     private DrawingHelper drawingHelper = new DrawingHelper();
 
-    public ShootingHelper(int resEighty, int resSixty, int resFourty, int resTweenty, Context context) {
+    public ShootingHelper(int resEighty, int resSixty, int resFourty, int resTweenty,
+                          int player1, int player2, int player3, int player4, Context context) {
         eighty = resEighty;
         sixty = resSixty;
         fourty = resFourty;
         tweenty = resTweenty;
+        this.player1 = player1;
+        this.player2 = player2;
+        this.player3 = player3;
+        this.player4 = player4;
         this.context = context;
     }
 
@@ -45,6 +54,7 @@ public class ShootingHelper {
         if(!AnimationOfBulletHelper.isAnimationOfBullet2) {
             List<Enemy> listOfAllEnemies = Stream.stream(listOfAllObjects.findAllVisibleEnemies()).map(o -> ((Enemy) o)).collect(toList());
             Enemy shooter = null;
+            List<Point> listOfShootedPoints = null;
 
             if(!listOfAllEnemies.isEmpty()){
                 if(listOfAllEnemies.size() == 2)
@@ -54,9 +64,15 @@ public class ShootingHelper {
 
                 OurObject player = listOfAllObjects.findAllEnemiesOrPlayerOrBullet("Player").get(0);
 
-                List<Point> listOfShootedPoints = countListOfShootedPointsForEnemy(shooter, player);
-                ((Player) player).setHp(((Player) player).getHp() - 20);
-                //changePictureOfPlayer(player, tileView);
+                if(Math.abs(Math.abs(player.getPoint().getX()) - Math.abs(shooter.getPoint().getX())) < 450){
+                     listOfShootedPoints = countListOfShootedPointsForEnemy(shooter, player.getPoint().getX(), player.getPoint().getY());
+                    ((Player) player).setHp(((Player) player).getHp() - 20);
+                    changePictureOfPlayer(player, tileView);
+                }else{
+                    double x = Math.random() < 0.5 ? 200:400;
+                    x = Math.random() < 0.5 ? x:-x;
+                    listOfShootedPoints = countListOfShootedPointsForEnemy(shooter, player.getPoint().getX()+x/2, player.getPoint().getY()+x);
+                }
 
                 if(AnimationOfBulletHelper.listOfShootedPoints2.isEmpty())
                     AnimationOfBulletHelper.listOfShootedPoints2 = listOfShootedPoints;
@@ -69,9 +85,7 @@ public class ShootingHelper {
         }
     }
 
-    private List<Point> countListOfShootedPointsForEnemy(Enemy shooter, OurObject player){
-        double x1 = player.getPoint().getX();
-        double y1 = player.getPoint().getY();
+    private List<Point> countListOfShootedPointsForEnemy(Enemy shooter, double x1, double y1){
         double x2 = shooter.getPoint().getX();
         double y2 = shooter.getPoint().getY();
         List<Point> list = new ArrayList<>();
@@ -141,6 +155,11 @@ public class ShootingHelper {
         double[] table;
         double counter = 0;
 
+        if(degrees == 90)
+            return countFor90(listOfShootedPoints, "+", player);
+        if(degrees == -90)
+            return countFor90(listOfShootedPoints, "-", player);
+
         if((degrees < -90 && degrees > -270) || (degrees > 90 && degrees < 270)){
             while(counter < 300){
                 table = countPoint(counter, 10, player, degrees);
@@ -157,6 +176,17 @@ public class ShootingHelper {
             return listOfShootedPoints;
         }
     }
+
+    private List<Point> countFor90(List<Point> listOfShootedPoints, String sign, OurObject player){
+        int mul = sign.equals("+")?10:-10;
+        double x = player.getPoint().getX();
+        for(int i=0;i<30;i++){
+            x += mul;
+            listOfShootedPoints.add(new Point(x,player.getPoint().getY()));
+        }
+        return listOfShootedPoints;
+    }
+
     private double countDeegres(double degrees){
         int mul = ((int) degrees) / 360;
         return degrees - mul*360;
@@ -202,19 +232,21 @@ public class ShootingHelper {
     }
 
     private OurObject changePictureOfPlayer(OurObject player, TileView tileView){
+        float rotation = player.getMarker().getRotation();
         tileView.removeMarker(player.getMarker());
 
         int hp = ((Player) player).getHp();
         if(hp <= 400 && hp > 300){
-            player.setImageView(imageTransformationHelper.createImageView(eighty, context, false));
+            player.setImageView(imageTransformationHelper.createImageView(player1, context, false));
         }else if(hp <= 300 && hp > 200){
-            player.setImageView(imageTransformationHelper.createImageView(sixty, context, false));
+            player.setImageView(imageTransformationHelper.createImageView(player2, context, false));
         }else if(hp <= 200 && hp > 100){
-            player.setImageView(imageTransformationHelper.createImageView(fourty, context, false));
+            player.setImageView(imageTransformationHelper.createImageView(player3, context, false));
         }else if(hp <= 100){
-            player.setImageView(imageTransformationHelper.createImageView(tweenty, context, false));
+            player.setImageView(imageTransformationHelper.createImageView(player4, context, false));
         }
 
+        player.getImageView().setRotation(rotation);
         drawingHelper.draw(player, tileView);
 
         return (Player) player;
