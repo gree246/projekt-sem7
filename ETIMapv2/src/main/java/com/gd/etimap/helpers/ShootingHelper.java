@@ -246,6 +246,8 @@ public class ShootingHelper {
             player.setImageView(imageTransformationHelper.createImageView(player4, context, false));
         }
 
+        player.getImageView().setScaleX(MainActivity.scaleOfAvatars);
+        player.getImageView().setScaleY(MainActivity.scaleOfAvatars);
         player.getImageView().setRotation(rotation);
         drawingHelper.draw(player, tileView);
 
