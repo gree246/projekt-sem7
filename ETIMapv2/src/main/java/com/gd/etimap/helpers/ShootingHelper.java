@@ -25,6 +25,7 @@ import static solid.collectors.ToList.toList;
 
 public class ShootingHelper {
 
+    public static boolean theEnd = false;
     private static int eighty;
     private static int sixty;
     private static int fourty;
@@ -63,23 +64,24 @@ public class ShootingHelper {
                     shooter = listOfAllEnemies.get(0);
 
                 OurObject player = listOfAllObjects.findAllEnemiesOrPlayerOrBullet("Player").get(0);
+                double distance = Math.abs(Math.abs(player.getPoint().getX()) - Math.abs(shooter.getPoint().getX()));
 
-                if(Math.abs(Math.abs(player.getPoint().getX()) - Math.abs(shooter.getPoint().getX())) < 450){
-                     listOfShootedPoints = countListOfShootedPointsForEnemy(shooter, player.getPoint().getX(), player.getPoint().getY());
-                    ((Player) player).setHp(((Player) player).getHp() - 20);
-                    changePictureOfPlayer(player, tileView);
-                }else{
-                    double x = Math.random() < 0.5 ? 200:400;
-                    x = Math.random() < 0.5 ? x:-x;
-                    listOfShootedPoints = countListOfShootedPointsForEnemy(shooter, player.getPoint().getX()+x/2, player.getPoint().getY()+x);
+                if(distance < 2500){
+                    if(distance < 450){
+                        listOfShootedPoints = countListOfShootedPointsForEnemy(shooter, player.getPoint().getX(), player.getPoint().getY());
+                        ((Player) player).setHp(((Player) player).getHp() - 20);
+                        changePictureOfPlayer(player, tileView);
+                    }else{
+                        double x = Math.random() < 0.5 ? 150:250;
+                        x = Math.random() < 0.5 ? x:-x;
+                        listOfShootedPoints = countListOfShootedPointsForEnemy(shooter, player.getPoint().getX()+x/2, player.getPoint().getY()+x);
+                    }
+                    if(AnimationOfBulletHelper.listOfShootedPoints2.isEmpty())
+                        AnimationOfBulletHelper.listOfShootedPoints2 = listOfShootedPoints;
+                    AnimationOfBulletHelper.isAnimationOfBullet2 = true;
+                    if(((Player) player).getHp() <= 0)
+                        theEnd = true;
                 }
-
-                if(AnimationOfBulletHelper.listOfShootedPoints2.isEmpty())
-                    AnimationOfBulletHelper.listOfShootedPoints2 = listOfShootedPoints;
-                AnimationOfBulletHelper.isAnimationOfBullet2 = true;
-
-                /*if(((Player) player).getHp() <= 0)
-                endGame();*/
             }
 
         }

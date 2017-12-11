@@ -14,9 +14,12 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
+import android.view.animation.AnimationUtils;
+import android.view.animation.RotateAnimation;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.gd.etimap.helpers.AnimationOfBulletHelper;
 import com.gd.etimap.helpers.CreateObjectsHelper;
@@ -80,6 +83,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private ShootingHelper shootingHelper;
     private AnimationOfBulletHelper animationOfBulletHelper = new AnimationOfBulletHelper();
     private SiHelper siHelper = new SiHelper();
+    private static Context toAnimationContext = null;
 
     private static int updateGUIInterval  = 1000;
     private updateGUIThread updateGUIThread=new updateGUIThread();
@@ -110,6 +114,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         doConnetion();
         doListenersAndTileLayout();
         updateGUIHandler.postDelayed(updateGUIThread, updateGUIInterval);
+
+        toAnimationContext = this;
     }
 
     private void doConnetion(){
@@ -200,7 +206,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         bulletPlayerAnimation();
         bulletEnemyAnimation();
 
-        if(Math.random() > 0.8)
+        if(Math.random() > 0.5)
             shootingHelper.shootToPlayer(listOfAllObjects, tileView);
         if(Math.random() < 0.5)
             siHelper.doEnemySi(listOfAllObjects, tileView);
@@ -212,14 +218,23 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     class updateGUIThread implements Runnable {
         @Override
         public void run() {
-            OurObject player = listOfAllObjects.findAllEnemiesOrPlayerOrBullet("Player").get(0);
-            tileView.slideToAndCenterWithScale(player.getPoint().getX(),player.getPoint().getY(),1f);
-            tileView.scrollToAndCenter(player.getPoint().getX(),player.getPoint().getY());
-            doAnimation();
-            canSend = true;
-            wifiManager.startScan();
-            canSend = false;
-            updateGUIHandler.postDelayed(this, updateGUIInterval);
+            if(ShootingHelper.theEnd){
+                if(!findViewById(android.R.id.content).equals(R.layout.koniec)){
+                    setContentView( R.layout.koniec );
+                    TextView text = (TextView)findViewById(R.id.endView);
+                    RotateAnimation rotate= (RotateAnimation) AnimationUtils.loadAnimation(toAnimationContext, R.anim.rotate_animation);
+                    text.setAnimation(rotate);
+                }
+            }else{
+                OurObject player = listOfAllObjects.findAllEnemiesOrPlayerOrBullet("Player").get(0);
+                tileView.slideToAndCenterWithScale(player.getPoint().getX(),player.getPoint().getY(),1f);
+                tileView.scrollToAndCenter(player.getPoint().getX(),player.getPoint().getY());
+                doAnimation();
+                canSend = true;
+                wifiManager.startScan();
+                canSend = false;
+                updateGUIHandler.postDelayed(this, updateGUIInterval);
+            }
         }
     }
 
