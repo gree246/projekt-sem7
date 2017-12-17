@@ -52,7 +52,7 @@ public class ShootingHelper {
     }
 
     public void shootToPlayer(ListOfAllObjects listOfAllObjects, TileView tileView){
-        if(!AnimationOfBulletHelper.isAnimationOfBullet2 && !AnimationOfBulletHelper.isAnimationOfBullet) {
+        if(!AnimationOfBulletHelper.isAnimationOfBullet2) {
             List<Enemy> listOfAllEnemies = Stream.stream(listOfAllObjects.findAllVisibleEnemies()).map(o -> ((Enemy) o)).collect(toList());
             Enemy shooter = null;
             List<Point> listOfShootedPoints = null;
@@ -104,7 +104,7 @@ public class ShootingHelper {
     }
 
     public void shoot(ListOfAllObjects listOfAllObjects, TileView tileView){
-        if(!AnimationOfBulletHelper.isAnimationOfBullet && !AnimationOfBulletHelper.isAnimationOfBullet2){
+        if(!AnimationOfBulletHelper.isAnimationOfBullet){
             Enemy shootedEnemy = (Enemy) isShooted(listOfAllObjects);
             if(shootedEnemy != null){
                 shootedEnemy.setHp(shootedEnemy.getHp() - 20);

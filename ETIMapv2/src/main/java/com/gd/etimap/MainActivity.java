@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private SiHelper siHelper = new SiHelper();
     private static Context toAnimationContext = null;
 
-    private static int updateGUIInterval  = 1000;
+    private static int updateGUIInterval  = 70;
     private updateGUIThread updateGUIThread=new updateGUIThread();
     private Handler updateGUIHandler = new Handler();
 
@@ -176,28 +176,24 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     private void bulletPlayerAnimation(){
         if(isAnimationOfBullet && AnimationOfBulletHelper.listOfShootedPoints.size() > 1){
-            updateGUIInterval = 40;
             counter++;
             animationOfBulletHelper.doAnimationOfBullet(listOfAllObjects, counter, tileView);
             if(counter == (AnimationOfBulletHelper.listOfShootedPoints.size()-1)){
                 counter = -1;
                 isAnimationOfBullet = false;
                 AnimationOfBulletHelper.listOfShootedPoints.clear();
-                updateGUIInterval = 1000;
             }
         }
     }
 
     private void bulletEnemyAnimation(){
         if(isAnimationOfBullet2 && AnimationOfBulletHelper.listOfShootedPoints2.size() > 1){
-            updateGUIInterval = 40;
             counter2++;
             animationOfBulletHelper.doAnimationOfBulletForEnemy(listOfAllObjects, counter2, tileView);
             if(counter2 == (AnimationOfBulletHelper.listOfShootedPoints2.size()-1)){
                 counter2 = -1;
                 isAnimationOfBullet2 = false;
                 AnimationOfBulletHelper.listOfShootedPoints2.clear();
-                updateGUIInterval = 1000;
             }
         }
     }
