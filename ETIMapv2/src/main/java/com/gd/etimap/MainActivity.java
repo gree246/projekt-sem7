@@ -47,8 +47,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private SensorManager mSensorManager;
     private Sensor mRotationV, mAccelerometer, mMagnetometer;
     boolean haveSensor = false, haveSensor2 = false;
+    private Sensor linearAccSensor;
+    boolean        havelinearAccSensor=false;
     float[] rMat = new float[9];
     float[] orientation = new float[3];
+    float[] acc = new float[3];
+
     private float[] mLastAccelerometer = new float[3];
     private float[] mLastMagnetometer = new float[3];
     private boolean mLastAccelerometerSet = false;
@@ -64,6 +68,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     Button buttonFDown;
     @BindView(R.id.buttonFloorUp)
     Button buttonFUp;
+
+    TextView accTextV;
+
 
     public static volatile double counter = -1;
     public static volatile double counter2 = -1;
@@ -94,6 +101,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         setContentView( R.layout.activity_main );
         ButterKnife.bind(this);
         createTileView();
+
+        acc[0]=0;
+        acc[1]=0;
+        acc[2]=0;
 
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         start();
@@ -153,6 +164,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         tileLayout.setMinimumHeight(600);
 
         tileLayout.addView(tileView);
+
+        accTextV= (TextView)findViewById(R.id.textView001) ;
 
         Button bLeft = (Button) findViewById(R.id.buttonLeft_id) ;
         bLeft.setOnClickListener(view -> drawingHelper.changePositionOfPlayer(listOfAllObjects, "x", "-", tileView));
@@ -250,6 +263,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             mRotationV = mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
             haveSensor = mSensorManager.registerListener(this, mRotationV, SensorManager.SENSOR_DELAY_UI);
         }
+        linearAccSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
+        havelinearAccSensor = mSensorManager.registerListener(this, linearAccSensor, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
     public void noSensorsAlert(){
@@ -271,6 +286,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         else {
             mSensorManager.unregisterListener(this, mAccelerometer);
             mSensorManager.unregisterListener(this, mMagnetometer);
+        }
+        if(havelinearAccSensor){
+            mSensorManager.unregisterListener(this,linearAccSensor);
         }
     }
 
@@ -294,6 +312,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             mAzimuth = (int) (Math.toDegrees(SensorManager.getOrientation(rMat, orientation)[0]) + 360) % 360;
         }
 
+        if(event.sensor.getType()==Sensor.TYPE_LINEAR_ACCELERATION){
+            acc[0]=0.9f*acc[0]+0.1f*event.values[0];
+            acc[1]=0.9f*acc[1]+0.1f*event.values[1];
+            acc[2]=0.9f*acc[2]+0.1f*event.values[2];
+            accTextV.setText( String.format("%.3f", acc[0])+"  "+ String.format("%.3f", acc[1])+"  "+ String.format("%.3f", acc[2]));
+        }
+
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
             System.arraycopy(event.values, 0, mLastAccelerometer, 0, event.values.length);
             mLastAccelerometerSet = true;
@@ -310,7 +335,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         mAzimuth = Math.round(mAzimuth);
 
         //DO ODKOMENTOWANIA
-        //imageTransformationHelper.rotateFromSensor(listOfAllObjects, tileView, -mAzimuth);
+        imageTransformationHelper.rotateFromSensor(listOfAllObjects, tileView, -mAzimuth);
 
         String where = "NW";
 
