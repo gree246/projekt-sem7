@@ -37,6 +37,8 @@ public class MyBroadcastReciver extends BroadcastReceiver {
     String serverIP="192.168.137.1";
     Player player;
     TileView tileView;
+    long sendingInterval= 1000; //ms
+    long lastUpdateTime=0;
 
     DrawingHelper drawingHelper = new DrawingHelper();
 
@@ -47,7 +49,9 @@ public class MyBroadcastReciver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if(!isAnimationOfBullet && !isAnimationOfBullet2 && canSend) {
+            long now=System.currentTimeMillis();
+            if(now-lastUpdateTime>sendingInterval){
+                lastUpdateTime=now;
             try {
                 StringBuffer buffer = new StringBuffer();
                 List<ScanResult> list = wifiManager.getScanResults();
@@ -80,7 +84,7 @@ public class MyBroadcastReciver extends BroadcastReceiver {
 
                 try {
                     socket = new Socket();
-                    socket.connect(new InetSocketAddress(serverIP, 8888), 2000);
+                    socket.connect(new InetSocketAddress(serverIP, 8888), 1000);
                     os = new DataOutputStream(socket.getOutputStream());
                     is = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 } catch (Exception e) {
@@ -90,7 +94,7 @@ public class MyBroadcastReciver extends BroadcastReceiver {
                     return null;
                 }
                 try {
-                    os.writeChars(message);
+                    os.writeUTF(message);
                     responseLine = is.readLine();
                     os.close();
                     is.close();

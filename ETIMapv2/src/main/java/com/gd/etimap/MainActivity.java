@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private SiHelper siHelper = new SiHelper();
     private static Context toAnimationContext = null;
 
-    private static int updateGUIInterval  = 70;
+    private static int updateGUIInterval  = 100;
     private updateGUIThread updateGUIThread=new updateGUIThread();
     private Handler updateGUIHandler = new Handler();
 
@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private void doConnetion(){
         MyBroadcastReciver reciver = new MyBroadcastReciver(listOfAllObjects,tileView);
         wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        registerReceiver(reciver, new IntentFilter(wifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
+        registerReceiver(reciver, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
     }
 
     private void createTileView(){
@@ -202,6 +202,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         bulletPlayerAnimation();
         bulletEnemyAnimation();
 
+
         if(Math.random() > 0.5)
             shootingHelper.shootToPlayer(listOfAllObjects, tileView);
         if(Math.random() < 0.5)
@@ -226,9 +227,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 tileView.slideToAndCenterWithScale(player.getPoint().getX(),player.getPoint().getY(),1f);
                 tileView.scrollToAndCenter(player.getPoint().getX(),player.getPoint().getY());
                 doAnimation();
-                canSend = true;
                 wifiManager.startScan();
-                canSend = false;
+
                 updateGUIHandler.postDelayed(this, updateGUIInterval);
             }
         }
