@@ -1,12 +1,18 @@
 package com.example.kamol.myapplication;
 
 import android.content.BroadcastReceiver;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.net.wifi.ScanResult;
 import android.os.AsyncTask;
 import android.preference.EditTextPreference;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.net.wifi.WifiManager;
@@ -50,7 +56,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SensorEventListener {
 
 
 //    TextView wifiSignal;
@@ -65,14 +71,79 @@ public class MainActivity extends AppCompatActivity {
     private TextView status;
     private Button sendButton;
     private Button centerButton;
+    private ImageView pozycja;
+
     private String resault="";
     private TileView tileView = null;
     private int centerX=0;
     private int centerY=0;
-    private int floor=1;
+    private int floor=0;
     private boolean send = false;
     private String previousData;
-    MyBroadcastReciver reciver = new MyBroadcastReciver();;
+    MyBroadcastReciver reciver = new MyBroadcastReciver();
+
+    private static final float NS2S = 1.0f / 1000000000.0f;
+    private float timestamp = 0;
+    public static volatile float velX, velY, velZ, dT;
+
+
+    private SensorManager mSensorManager;
+    private Sensor mRotationV, mAccelerometer, mMagnetometer;
+    boolean haveSensor = false, haveSensor2 = false;
+    private Sensor linearAccSensor;
+    boolean        havelinearAccSensor=false;
+    float[] rMat = new float[9];
+    float[] orientation = new float[3];
+    float[] acc = new float[3];
+    private float mAzimuth;
+    private boolean mLastAccelerometerSet=false;
+    private boolean mLastMagnetometerSet=false;
+    private float[] mLastMagnetometer = new float[3];
+    private float[] mLastAccelerometer= new float[3];
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        if (event.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR) {
+            SensorManager.getRotationMatrixFromVector(rMat, event.values);
+            mAzimuth = (int) (Math.toDegrees(SensorManager.getOrientation(rMat, orientation)[0]) + 180) % 360;
+        }
+
+        if(event.sensor.getType()==Sensor.TYPE_LINEAR_ACCELERATION){
+
+
+
+            acc[0]=0.9f*acc[0]+0.1f*event.values[0];
+            acc[1]=0.9f*acc[1]+0.1f*event.values[1];
+            acc[2]=0.9f*acc[2]+0.1f*event.values[2];
+//          accTextV.setText( String.format("%.3f", acc[0])+"  "+ String.format("%.3f", acc[1])+"  "+ String.format("%.3f", acc[2]));
+        }
+
+        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+            System.arraycopy(event.values, 0, mLastAccelerometer, 0, event.values.length);
+            mLastAccelerometerSet = true;
+        } else if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
+            System.arraycopy(event.values, 0, mLastMagnetometer, 0, event.values.length);
+            mLastMagnetometerSet = true;
+        }
+        if (mLastAccelerometerSet && mLastMagnetometerSet) {
+            SensorManager.getRotationMatrix(rMat, null, mLastAccelerometer, mLastMagnetometer);
+            SensorManager.getOrientation(rMat, orientation);
+            mAzimuth = (int) (Math.toDegrees(SensorManager.getOrientation(rMat, orientation)[0]) + 180) % 360;
+        }
+
+        mAzimuth = Math.round(mAzimuth);
+//        accTextV.setText( String.format("%.3f", acc[0])+"  "+ String.format("%.3f", acc[1])+"  "+ String.format("%.3f", acc[2]));
+
+
+        pozycja.setRotation(mAzimuth);
+
+
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int i) {
+
+    }
 
     class getAsyncTask extends AsyncTask<Void, Void,Void>{
         String out;
@@ -152,7 +223,7 @@ public class MainActivity extends AppCompatActivity {
 
         tileView = new TileView(this);
         tileView.setSize( 8192, 8192 );  // the original size of the untiled image
-        tileView.addDetailLevel( 1f, "floor1/tile_1_%d_%d.png", 256, 256);
+        tileView.addDetailLevel( 1f, "floor"+Integer.toString(floor)+"/tile_"+Integer.toString(floor)+"_%d_%d.png", 256, 256);
 //        tileView.slideToAndCenterWithScale(4000,4000,1f);
         tileView.setScale(1.0f);
         tileView.scrollToAndCenter(4000,4000);
@@ -160,7 +231,7 @@ public class MainActivity extends AppCompatActivity {
 
         final RelativeLayout tileLayout = (RelativeLayout) findViewById(R.id.MapLayoutId) ;
         tileLayout.addView(tileView);
-        ImageView pozycja = new ImageView(this);
+        pozycja = new ImageView(this);
         pozycja.setImageResource(R.drawable.crosshair2);
         pozycja.setMaxWidth(30);
         pozycja.setMaxHeight(30);
@@ -173,7 +244,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         tileView.scrollTo(4500,4500);
-
+//        pozycja.setRotation(180);
 
         centerButton = (Button) findViewById(R.id.centerButtonId);
         centerButton.setOnClickListener(new View.OnClickListener() {
@@ -199,7 +270,7 @@ public class MainActivity extends AppCompatActivity {
                                                       }
                                                   }
                                                   catch(Exception e){
-                                                          status.setText("errorStringParse");
+                                                          status.setText("Point not in database");
                                                       }
 
 
@@ -223,11 +294,11 @@ public class MainActivity extends AppCompatActivity {
 //                centerY=tileView.getScrollY();
                 nazwaPomiaru=nazwaPomiaruET.getText().toString();
                 nazwaPomiaruET.setText(nazwaPomiaru.substring(0,1)+String.format("%03d", Integer.parseInt(nazwaPomiaru.substring(1))+1));
-//                SharedPreferences settings = getSharedPreferences("nanana", 0);
-//                SharedPreferences.Editor editor = settings.edit();
-//                editor.putString("nazwaPomiaru", nazwaPomiaruET.getText().toString());
-//                editor.putString("wyslijIp", wyslijIP);
-//                editor.commit();
+                SharedPreferences settings = getSharedPreferences("nanana", 0);
+                SharedPreferences.Editor editor = settings.edit();
+                editor.putString("nazwaPomiaru", nazwaPomiaruET.getText().toString());
+                editor.putString("wyslijIp", wyslijIP);
+                editor.commit();
 
 
 //                nazwaPomiaruET.setText(Integer.toString(tileView.getScrollX()));
@@ -235,8 +306,7 @@ public class MainActivity extends AppCompatActivity {
                 if(wifiManager.startScan()){
                     status.setText("wait");
                 };
-                centerButton.callOnClick();
-
+//                centerButton.callOnClick();
 
 
 
@@ -246,8 +316,10 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+
+
         wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        registerReceiver(reciver, new IntentFilter(wifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
+        registerReceiver(reciver, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
         wifiManager.setWifiEnabled(true);
         wifiLock = wifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL, "sdgs");
         wifiLock.setReferenceCounted(true);
@@ -255,6 +327,9 @@ public class MainActivity extends AppCompatActivity {
 
         getAsyncTask atask = new getAsyncTask();
         atask.execute();
+
+        mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        start();
 
         //sendData(reciver.resault);
 
@@ -282,7 +357,50 @@ public class MainActivity extends AppCompatActivity {
 //        super.onPause();
 //        timer.cancel();
 //    }
+public void start() {
+    if (mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR) == null) {
+        if ((mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) == null) || (mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD) == null)) {
+            noSensorsAlert();
+        }
+        else {
+            mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+            mMagnetometer = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+            haveSensor = mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_UI);
+            haveSensor2 = mSensorManager.registerListener(this, mMagnetometer, SensorManager.SENSOR_DELAY_UI);
+        }
+    }
+    else{
+        mRotationV = mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
+        haveSensor = mSensorManager.registerListener(this, mRotationV, SensorManager.SENSOR_DELAY_UI);
+    }
+    linearAccSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
+    havelinearAccSensor = mSensorManager.registerListener(this, linearAccSensor, SensorManager.SENSOR_DELAY_NORMAL);
+}
 
+    public void noSensorsAlert(){
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+        alertDialog.setMessage("Your device doesn't support the Compass.")
+                .setCancelable(false)
+                .setNegativeButton("Close",new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        finish();
+                    }
+                });
+        alertDialog.show();
+    }
+
+    public void stop() {
+        if (haveSensor) {
+            mSensorManager.unregisterListener(this, mRotationV);
+        }
+        else {
+            mSensorManager.unregisterListener(this, mAccelerometer);
+            mSensorManager.unregisterListener(this, mMagnetometer);
+        }
+        if(havelinearAccSensor){
+            mSensorManager.unregisterListener(this,linearAccSensor);
+        }
+    }
 
     class MyBroadcastReciver extends BroadcastReceiver {
 
@@ -331,7 +449,12 @@ public class MainActivity extends AppCompatActivity {
                     Date time = new Date();
                     String currentDateandTime = sdf.format(time);
 
-                    String message = nazwaPomiaru + ";" + Integer.toString(floor) + ";" + Integer.toString(centerX) + ";" + Integer.toString(centerY) + "|" + buffero;
+                    String message = nazwaPomiaru + ";" +
+                            Integer.toString(floor) + ";" +
+                            Integer.toString(centerX) + ";" +
+                            Integer.toString(centerY) +";"+
+                            String.format("%.0f", mAzimuth)+
+                            "|" + buffero;
 
 
                     Socket socket = null;
@@ -416,7 +539,7 @@ public class MainActivity extends AppCompatActivity {
                 Integer currentTimeMiliseconds = Integer.parseInt(currentDateandTime.split("\\.")[1]);
 
                 error = false;
-                String message = nazwaPomiaru + ";" + Integer.toString(floor) + ";" + Integer.toString(centerX) + ";" + Integer.toString(centerY) + "|" + buf+"\n";
+                String message = nazwaPomiaru + ";" + Integer.toString(floor) + ";" + Integer.toString(centerX) + ";" + Integer.toString(centerY) + ";"+Float.toString(mAzimuth)+"|" + buf+"\n";
 
 
                 RequestBody body = new FormBody.Builder()

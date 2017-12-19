@@ -20,6 +20,9 @@ import java.net.Socket;
 import java.util.List;
 
 import static com.gd.etimap.MainActivity.canSend;
+import static com.gd.etimap.MainActivity.velX;
+import static com.gd.etimap.MainActivity.velY;
+import static com.gd.etimap.MainActivity.velZ;
 import static com.gd.etimap.helpers.AnimationOfBulletHelper.isAnimationOfBullet;
 import static com.gd.etimap.helpers.AnimationOfBulletHelper.isAnimationOfBullet2;
 
@@ -30,28 +33,29 @@ import static com.gd.etimap.helpers.AnimationOfBulletHelper.isAnimationOfBullet2
 public class MyBroadcastReciver extends BroadcastReceiver {
 
     public static WifiManager wifiManager;
-    private double x=4000;
-    private double y=4000;
-    private int floor=0;
+    private double x = 4000;
+    private double y = 4000;
+    private int floor = 0;
 
-    String serverIP="192.168.137.1";
+    String serverIP = "192.168.137.1";
     Player player;
     TileView tileView;
-    long sendingInterval= 1000; //ms
-    long lastUpdateTime=0;
+    long sendingInterval = 1000; //ms
+    long lastUpdateTime = 0;
 
     DrawingHelper drawingHelper = new DrawingHelper();
 
-    public MyBroadcastReciver(ListOfAllObjects listOfAllObjects,TileView tileView){
-        this.tileView=(TileView)tileView;
+    public MyBroadcastReciver(ListOfAllObjects listOfAllObjects, TileView tileView) {
+        this.tileView = (TileView) tileView;
         player = (Player) listOfAllObjects.findAllEnemiesOrPlayerOrBullet("Player").get(0);
     }
 
     @Override
     public void onReceive(Context context, Intent intent) {
-            long now=System.currentTimeMillis();
-            if(now-lastUpdateTime>sendingInterval){
-                lastUpdateTime=now;
+
+        long now = System.currentTimeMillis();
+        if (now - lastUpdateTime > sendingInterval) {
+            lastUpdateTime = now;
             try {
                 StringBuffer buffer = new StringBuffer();
                 List<ScanResult> list = wifiManager.getScanResults();
@@ -63,8 +67,10 @@ public class MyBroadcastReciver extends BroadcastReceiver {
                     buffer.append(scanResult.frequency);
                     buffer.append(";");
                 }
-                sendData(buffer.toString());
-            }catch (Exception e){
+
+                    sendData(buffer.toString());
+
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -73,11 +79,11 @@ public class MyBroadcastReciver extends BroadcastReceiver {
     private void sendData(final String buffero) {
 
         AsyncTask asyncTask = new AsyncTask() {
-            String responseLine="";
+            String responseLine = "";
 
             @Override
             protected Object doInBackground(Object[] params) {
-                String message = "a000;0;0;0|" + buffero;
+                String message = "a000;0;0;0;"+String.format("%.0f", player.getImageView().getRotation())+"|" + buffero;
                 Socket socket = null;
                 DataOutputStream os = null;
                 BufferedReader is = null;
@@ -104,26 +110,33 @@ public class MyBroadcastReciver extends BroadcastReceiver {
                 }
                 return null;
             }
+
             @Override
             protected void onPostExecute(Object o) {
                 super.onPostExecute(o);
-                try {
-                    x = Double.parseDouble(responseLine.split(";")[0]);
-                    y = Double.parseDouble(responseLine.split(";")[1]);
-                    floor = Integer.parseInt(responseLine.split(";")[2]);
-                }catch (Exception e){
-                    x = player.getPoint().getX();
-                    y = player.getPoint().getY();
+
+                    try {
+                        x = Double.parseDouble(responseLine.split(";")[0]);
+                        y = Double.parseDouble(responseLine.split(";")[1]);
+                        floor = Integer.parseInt(responseLine.split(";")[2]);
+                    } catch (Exception e) {
+                        x = player.getPoint().getX();
+                        y = player.getPoint().getY();
+                    }
+                    double wsp = Math.sqrt(Math.pow((double)velX,2)+Math.pow((double)velX,2)+Math.pow((double)velX,2))/5;
+                    if(wsp>1){
+                        wsp=1;
+                    }
+                    player.getPoint().setX((1-wsp) * player.getPoint().getX() + wsp* x);
+                    player.getPoint().setY((1-wsp) * player.getPoint().getY() + wsp * y);
+
+                    // drawingHelper.changeFloor(tileView, floor);
+
+                    tileView.moveMarker(player.getMarker(), player.getPoint().getX(), player.getPoint().getY());
+                    tileView.slideToAndCenterWithScale(player.getPoint().getX(), player.getPoint().getY(), 1f);
+                    tileView.scrollToAndCenter(player.getPoint().getX(), player.getPoint().getY());
                 }
-                player.getPoint().setX(0*player.getPoint().getX()+1* x);
-                player.getPoint().setY(0*player.getPoint().getY()+1*y);
 
-               // drawingHelper.changeFloor(tileView, floor);
-
-                tileView.moveMarker(player.getMarker(), x, y);
-                tileView.slideToAndCenterWithScale(player.getPoint().getX(),player.getPoint().getY(),1f);
-                tileView.scrollToAndCenter(player.getPoint().getX(),player.getPoint().getY());
-            }
         };
         asyncTask.execute();
     }

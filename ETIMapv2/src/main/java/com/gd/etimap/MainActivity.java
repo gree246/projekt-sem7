@@ -53,6 +53,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     float[] orientation = new float[3];
     float[] acc = new float[3];
 
+    private static final float NS2S = 1.0f / 1000000000.0f;
+    private float timestamp = 0;
+    public static volatile float velX, velY, velZ, dT;
+
+
     private float[] mLastAccelerometer = new float[3];
     private float[] mLastMagnetometer = new float[3];
     private boolean mLastAccelerometerSet = false;
@@ -309,14 +314,36 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     public void onSensorChanged(SensorEvent event) {
         if (event.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR) {
             SensorManager.getRotationMatrixFromVector(rMat, event.values);
-            mAzimuth = (int) (Math.toDegrees(SensorManager.getOrientation(rMat, orientation)[0]) + 360) % 360;
+            mAzimuth = (int) (Math.toDegrees(SensorManager.getOrientation(rMat, orientation)[0]) + 180) % 360;
         }
 
         if(event.sensor.getType()==Sensor.TYPE_LINEAR_ACCELERATION){
-            acc[0]=0.9f*acc[0]+0.1f*event.values[0];
-            acc[1]=0.9f*acc[1]+0.1f*event.values[1];
-            acc[2]=0.9f*acc[2]+0.1f*event.values[2];
-            accTextV.setText( String.format("%.3f", acc[0])+"  "+ String.format("%.3f", acc[1])+"  "+ String.format("%.3f", acc[2]));
+
+
+            if (timestamp == 0) {
+                timestamp = event.timestamp;
+            }
+            dT = (event.timestamp - timestamp) * NS2S;
+            timestamp = event.timestamp;
+            velX += event.values[0] * dT;
+            velY += event.values[1] * dT;
+            velZ += event.values[2] * dT;
+            if(event.values[0]<0.1 && event.values[0]>-0.1) {
+                velX=0;
+            }
+            if(event.values[1]<0.1 && event.values[1]>-0.1) {
+                velY=0;
+            }
+            if(event.values[2]<0.1 && event.values[2]>-0.1) {
+                velZ=0;
+            }
+            accTextV.setText( String.format("%.3f", velX)+"  "+ String.format("%.3f",velY)+"  "+ String.format("%.3f", velZ));
+
+
+//            acc[0]=0.9f*acc[0]+0.1f*event.values[0];
+//            acc[1]=0.9f*acc[1]+0.1f*event.values[1];
+//            acc[2]=0.9f*acc[2]+0.1f*event.values[2];
+//            accTextV.setText( String.format("%.3f", acc[0])+"  "+ String.format("%.3f", acc[1])+"  "+ String.format("%.3f", acc[2]));
         }
 
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
@@ -329,10 +356,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         if (mLastAccelerometerSet && mLastMagnetometerSet) {
             SensorManager.getRotationMatrix(rMat, null, mLastAccelerometer, mLastMagnetometer);
             SensorManager.getOrientation(rMat, orientation);
-            mAzimuth = (int) (Math.toDegrees(SensorManager.getOrientation(rMat, orientation)[0]) + 360) % 360;
+            mAzimuth = (int) (Math.toDegrees(SensorManager.getOrientation(rMat, orientation)[0]) + 180) % 360;
         }
 
         mAzimuth = Math.round(mAzimuth);
+//        accTextV.setText( String.format("%.3f", acc[0])+"  "+ String.format("%.3f", acc[1])+"  "+ String.format("%.3f", acc[2]));
+
 
         //DO ODKOMENTOWANIA
         imageTransformationHelper.rotateFromSensor(listOfAllObjects, tileView, -mAzimuth);
