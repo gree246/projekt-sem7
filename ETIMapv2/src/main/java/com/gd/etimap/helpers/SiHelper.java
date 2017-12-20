@@ -6,7 +6,10 @@ import com.gd.etimap.atributtes.Point;
 import com.gd.etimap.objects.Enemy;
 import com.gd.etimap.objects.ListOfAllObjects;
 import com.gd.etimap.objects.OurObject;
+import com.gd.etimap.objects.Player;
 import com.qozix.tileview.TileView;
+
+import com.gd.etimap.helpers.ShootingHelper;
 
 import java.util.List;
 
@@ -24,7 +27,7 @@ public class SiHelper {
     DrawingHelper drawingHelper = new DrawingHelper();
 
 
-    public void doEnemySi(ListOfAllObjects listOfAllObjects, TileView tileView){
+    public void doEnemySi(ListOfAllObjects listOfAllObjects, TileView tileView, ShootingHelper shootingHelper){
         OurObject player = listOfAllObjects.findAllEnemiesOrPlayerOrBullet("Player").get(0);
         playerX = player.getPoint().getX();
         playerY = player.getPoint().getY();
@@ -36,7 +39,7 @@ public class SiHelper {
 //        Stream.stream(listOfOldVisibleEnemies).forEach((Action1<OurObject>) o -> changePositionOfOldEnemies(o, tileView));
 
 
-        Stream.stream(listOfVisibleEnemies).forEach((Action1<OurObject>) o -> changePositionOfOldEnemies(o, tileView));
+        Stream.stream(listOfVisibleEnemies).forEach((Action1<OurObject>) o -> changePositionOfOldEnemies(o, tileView,player,shootingHelper));
     }
 
     private List<OurObject> getNewEnemies(List<OurObject> listOfVisibleEnemies){
@@ -56,26 +59,23 @@ public class SiHelper {
 //        ((Enemy) ourObject).setSi(true);
     }
 
-    private void changePositionOfOldEnemies(OurObject ourObject, TileView tileView){
+    private void changePositionOfOldEnemies(OurObject ourObject, TileView tileView, OurObject player, ShootingHelper shootingHelper){
         Enemy enemy = ((Enemy) ourObject);
-//        if(enemy.getEnemyAnimation().isDown())
-//            ourObject.setPoint(new Point(ourObject.getPoint().getX() + 10, ourObject.getPoint().getY()));
-//        else
-//            ourObject.setPoint(new Point(ourObject.getPoint().getX() - 10, ourObject.getPoint().getY()));
-//
-//        if(enemy.getEnemyAnimation().getTime() >= 20){
-//            enemy.getEnemyAnimation().setTime(0);
-//            enemy.getEnemyAnimation().setDown(!enemy.getEnemyAnimation().isDown());
-//        }
-//        enemy.getEnemyAnimation().setTime(enemy.getEnemyAnimation().getTime() + 1);
         double rand = Math.random();
         char signx, signy;
-        double pointX, pointY;
+        double pointX, pointY, diffX, diffY;
+
+        diffX = enemy.getPoint().getX() - playerX;
+        diffY = enemy.getPoint().getY() - playerY;
+
         pointX = 0;
         pointY = 0;
 
+        int speed = 5;
+
         signx = '+';
         signy = '+';
+
 
         if(MainActivity.floor == -1)
         {
@@ -83,34 +83,6 @@ public class SiHelper {
                 signx = '-';
             else
                 signx = '+';
-
-
-
-//            if(enemy.getPoint().getX() <= 1276)
-//                signx = '+';
-//            else if(enemy.getPoint().getX() >= 6858)
-//                signx = '-';
-//            else if(enemy.getPoint().getX() > 5267)
-//            {
-//                if(rand < 0.7)
-//                    signx = '-';
-//                else
-//                    signx = '+';
-//            }
-//            else if(enemy.getPoint().getX() < 2867)
-//            {
-//                if(rand < 0.7)
-//                    signx = '+';
-//                else
-//                    signx = '-';
-//            }
-//            else
-//            {
-//                if(rand < 0.5)
-//                    signx = '+';
-//                else
-//                    signx = '-';
-//            }
 
             if(enemy.getPoint().getY() <= 4228)
                 signy = '+';
@@ -130,31 +102,6 @@ public class SiHelper {
                 signx = '-';
             else
                 signx = '+';
-//            if(enemy.getPoint().getX() <= 1360)
-//                signx = '+';
-//            else if(enemy.getPoint().getX() >= 6924)
-//                signx = '-';
-//            else if(enemy.getPoint().getX() > 5467)
-//            {
-//                if(rand < 0.7)
-//                    signx = '-';
-//                else
-//                    signx = '+';
-//            }
-//            else if(enemy.getPoint().getX() < 3067)
-//            {
-//                if(rand < 0.7)
-//                    signx = '+';
-//                else
-//                    signx = '-';
-//            }
-//            else
-//            {
-//                if(rand < 0.5)
-//                    signx = '+';
-//                else
-//                    signx = '-';
-//            }
 
             if(enemy.getPoint().getY() <= 4270)
                 signy = '+';
@@ -169,23 +116,26 @@ public class SiHelper {
             }
         }
 
-        if(enemy.getPoint().getX() - playerX < 200 && enemy.getPoint().getX() - playerX > -200)
+        if(Math.abs(diffX)<20 && Math.abs(diffY)<20)
         {
-            pointX = ourObject.getPoint().getX();
+            ((Player) player).setHp(((Player) player).getHp() - 6);
+            shootingHelper.changePictureOfPlayer(player, tileView);
+            if(((Player) player).getHp() <= 0)
+                shootingHelper.theEnd = true;
         }
-        else
-        {
-            if(signx == '+')
-                pointX = ourObject.getPoint().getX() + 10;
-            else
-                pointX = ourObject.getPoint().getX() - 10;
 
-        }
-        if(signy == '+')
-            pointY = ourObject.getPoint().getY() + 10;
+        if(signx == '+')
+            pointX = ourObject.getPoint().getX() + speed;
         else
-            pointY = ourObject.getPoint().getY() - 10;
+            pointX = ourObject.getPoint().getX() - speed;
+
+        if(signy == '+')
+            pointY = ourObject.getPoint().getY() + speed;
+        else
+            pointY = ourObject.getPoint().getY() - speed;
         ourObject.setPoint(new Point(pointX, pointY));
         drawingHelper.changePositionToPoint(ourObject, tileView);
     }
+
+
 }

@@ -233,7 +233,7 @@ public class ShootingHelper {
         return (Enemy) ourObject;
     }
 
-    private OurObject changePictureOfPlayer(OurObject player, TileView tileView){
+    public OurObject changePictureOfPlayer(OurObject player, TileView tileView){
         float rotation = player.getMarker().getRotation();
         tileView.removeMarker(player.getMarker());
 

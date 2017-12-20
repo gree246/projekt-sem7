@@ -221,10 +221,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         bulletEnemyAnimation();
 
 
-        if(Math.random() > 0.5)
-            shootingHelper.shootToPlayer(listOfAllObjects, tileView);
-        if(Math.random() < 0.5)
-            siHelper.doEnemySi(listOfAllObjects, tileView);
+//        if(Math.random() > 0.5)
+//            shootingHelper.shootToPlayer(listOfAllObjects, tileView);
+//        if(Math.random() < 0.5)
+            siHelper.doEnemySi(listOfAllObjects, tileView, shootingHelper);
         if(Math.random() < 0.25){
             drawingHelper.drawEnemy(listOfAllObjects, imageTransformationHelper.createImageView(R.mipmap.enemy0, this, false), tileView);
         }
