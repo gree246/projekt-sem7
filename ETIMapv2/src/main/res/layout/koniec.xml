@@ -2,15 +2,14 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/textEnd"
-    android:gravity="center_vertical|center_horizontal">
+    android:id="@+id/textEnd">
 
     <TextView
         android:text="Przegrałeś!!"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="400dp"
         android:id="@+id/endView"
-        android:gravity="center"
+        android:gravity="center_vertical|center_horizontal"
         android:textSize="35dp"
         android:fadingEdge="horizontal"
         android:shadowColor="@color/colorAccent"
@@ -18,4 +17,12 @@
         android:shadowDx="10"
         android:shadowDy="10"
         />
+
+    <Button
+        android:id="@+id/buttonEnd"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:text="Restart" />
+
 </LinearLayout>

@@ -2,6 +2,7 @@ package com.gd.etimap;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -29,6 +30,7 @@ import com.gd.etimap.helpers.ShootingHelper;
 import com.gd.etimap.helpers.SiHelper;
 import com.gd.etimap.objects.ListOfAllObjects;
 import com.gd.etimap.objects.OurObject;
+import com.gd.etimap.objects.Player;
 import com.gd.etimap.receivers.MyBroadcastReciver;
 import com.qozix.tileview.TileView;
 import com.qozix.tileview.detail.DetailLevel;
@@ -237,8 +239,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 if(!findViewById(android.R.id.content).equals(R.layout.koniec)){
                     setContentView( R.layout.koniec );
                     TextView text = (TextView)findViewById(R.id.endView);
-                    RotateAnimation rotate= (RotateAnimation) AnimationUtils.loadAnimation(toAnimationContext, R.anim.rotate_animation);
-                    text.setAnimation(rotate);
+//                    RotateAnimation rotate= (RotateAnimation) AnimationUtils.loadAnimation(toAnimationContext, R.anim.rotate_animation);
+//                    text.setAnimation(rotate);
+                    Button bEnd = (Button) findViewById(R.id.buttonEnd);
+                    bEnd.setOnClickListener(view -> reset());
                 }
             }else{
                 OurObject player = listOfAllObjects.findAllEnemiesOrPlayerOrBullet("Player").get(0);
@@ -388,6 +392,19 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int i) {
+
+    }
+
+    public void reset()
+    {
+        ShootingHelper.theEnd = false;
+        OurObject player = listOfAllObjects.findAllEnemiesOrPlayerOrBullet("Player").get(0);
+        ((Player) player).setHp(500);
+        setContentView( R.layout.activity_main );
+        Intent i = getBaseContext().getPackageManager()
+                .getLaunchIntentForPackage( getBaseContext().getPackageName() );
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(i);
 
     }
 }

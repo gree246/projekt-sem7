@@ -116,7 +116,7 @@ public class SiHelper {
             }
         }
 
-        if(Math.abs(diffX)<20 && Math.abs(diffY)<20)
+        if(Math.abs(diffX)<60 && Math.abs(diffY)<60)
         {
             ((Player) player).setHp(((Player) player).getHp() - 6);
             shootingHelper.changePictureOfPlayer(player, tileView);

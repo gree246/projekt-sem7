@@ -40,7 +40,7 @@ public class MyBroadcastReciver extends BroadcastReceiver {
     String serverIP = "192.168.137.1";
     Player player;
     TileView tileView;
-    long sendingInterval = 1000; //ms
+    long sendingInterval = 500; //ms
     long lastUpdateTime = 0;
 
     DrawingHelper drawingHelper = new DrawingHelper();
@@ -127,6 +127,7 @@ public class MyBroadcastReciver extends BroadcastReceiver {
                     if(wsp>1){
                         wsp=1;
                     }
+                    wsp = 1;
                     player.getPoint().setX((1-wsp) * player.getPoint().getX() + wsp* x);
                     player.getPoint().setY((1-wsp) * player.getPoint().getY() + wsp * y);
 
