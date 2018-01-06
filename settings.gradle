@@ -1,3 +1,3 @@
-include ':ETIMapv1'
+
 include ':ETIMapv2'
 include ':WiFiLocalization'

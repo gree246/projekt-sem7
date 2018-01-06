@@ -2,10 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/ETIMapv1/ETIMapv1.iml" filepath="$PROJECT_DIR$/ETIMapv1/ETIMapv1.iml" />
       <module fileurl="file://$PROJECT_DIR$/ETIMapv2/ETIMapv2.iml" filepath="$PROJECT_DIR$/ETIMapv2/ETIMapv2.iml" />
       <module fileurl="file://$PROJECT_DIR$/WiFiLocalization/WiFiLocalization.iml" filepath="$PROJECT_DIR$/WiFiLocalization/WiFiLocalization.iml" />
-      <module fileurl="file://$PROJECT_DIR$/projekt-sem71.iml" filepath="$PROJECT_DIR$/projekt-sem71.iml" />
+      <module fileurl="file://C:\Users\Grzegorz\AndroidProjects\projekt-sem7k\projekt-sem71.iml" filepath="C:\Users\Grzegorz\AndroidProjects\projekt-sem7k\projekt-sem71.iml" />
+      <module fileurl="file://$PROJECT_DIR$/projekt-sem7k.iml" filepath="$PROJECT_DIR$/projekt-sem7k.iml" />
     </modules>
   </component>
 </project>
